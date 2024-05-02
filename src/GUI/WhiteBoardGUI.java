@@ -27,17 +27,15 @@ public class WhiteBoardGUI extends JPanel {
     }
 
     public WhiteBoardGUI(){
-        // init states
-        this.color = Color.black;
-        this.stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-        this.mode = DrawMode.RECTANGLE;
+        setLayout(new BorderLayout());
+        initStates();
+        initCanvas();
+        initListeners();
+        initToolPanel();
+    }
 
-        // initialize canvas
-        this.img = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = this.img.createGraphics();
-        g2d.fillRect(0, 0, 800, 600);
-        g2d.dispose();
 
+    private void initListeners() {
         // attach listeners
         addMouseListener(new MouseAdapter() {
             @Override
@@ -58,8 +56,72 @@ public class WhiteBoardGUI extends JPanel {
             }
         });
     }
+    private void initStates() {
+        // init states
+        this.color = Color.black;
+        this.strokeWidth = 2;
+        this.stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+        this.mode = DrawMode.FREE_DRAW;
+    }
+    private void initCanvas() {
+        // initialize canvas
+        this.img = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = this.img.createGraphics();
+        g2d.fillRect(0, 0, 800, 600);
+        g2d.dispose();
+    }
+    private void initToolPanel() {
+        JPanel toolPanel = new JPanel();
+        toolPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        JButton setColorBtn = new JButton("Color");
+        setColorBtn.addActionListener(e ->{
+            Color newColor = JColorChooser.showDialog(this, "Pick a color", color);
+            if (newColor != null){
+                color = newColor;
+            }
+        });
+
+        JComboBox<DrawMode> drawModeMenu = new JComboBox<>(DrawMode.values());
+        drawModeMenu.addActionListener(e -> {
+            mode = (DrawMode) drawModeMenu.getSelectedItem();
+        });
+
+        JSlider strokeWidthSelector = new JSlider(2,30,2);
+        strokeWidthSelector.addChangeListener(e -> {
+            strokeWidth = strokeWidthSelector.getValue();
+        });
+
+        toolPanel.add(setColorBtn);
+        toolPanel.add(drawModeMenu);
+        toolPanel.add(strokeWidthSelector);
+        add(toolPanel, BorderLayout.SOUTH);
+    }
+
+    private void onMouseDrag(MouseEvent e){
+        if (mode == DrawMode.FREE_DRAW || mode == DrawMode.ERASE){
+            quickDrawShape(start, e.getPoint());
+            start = e.getPoint();
+        } else if (mode == DrawMode.TEXT) {
+            // pass (optional: preview txt box)
+        } else {
+            // show preview -> by updating previewShape
+            updatePreviewShape(start, e.getPoint());
+        }
+    }
+
+    private void onMouseRelease(MouseEvent e){
+        if (mode == DrawMode.FREE_DRAW || mode == DrawMode.ERASE){
+            quickDrawShape(start, e.getPoint());
+        } else if (mode == DrawMode.TEXT) {
+            // TODO: draw text
+        } else {
+            quickDrawShape(start, e.getPoint());
+        }
+    }
 
     private void updatePreviewShape(Point a, Point b) {
+        this.stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         if (mode == DrawMode.LINE){
             previewShape = new Line2D.Double(a.x, a.y, b.x, b.y);
         } else {
@@ -79,36 +141,12 @@ public class WhiteBoardGUI extends JPanel {
         repaint();
     }
 
-
-    private void onMouseDrag(MouseEvent e){
-        if (mode == DrawMode.FREE_DRAW || mode == DrawMode.ERASE){
-            quickDrawShape(start, e.getPoint());
-            start = e.getPoint();
-        } else if (mode == DrawMode.TEXT) {
-            // pass (optional: preview txt box)
-        } else {
-            // show preview -> by updating previewShape
-            updatePreviewShape(start, e.getPoint());
-        }
-    }
-
-    private void onMouseRelease(MouseEvent e){
-        if (mode == DrawMode.FREE_DRAW || mode == DrawMode.ERASE){
-            quickDrawShape(start, e.getPoint());
-        } else if (mode == DrawMode.TEXT) {
-            // draw text
-        } else {
-            quickDrawShape(start, e.getPoint());
-        }
-    }
-
     /**
      * local variation of drawShape, using default color & stroke
      * Should not handle drawing text
      */
     private void quickDrawShape(Point a, Point b){
-        Graphics2D g2d = img.createGraphics();
-        g2d.setPaint(color);
+        Graphics2D g2d = getBrush();
         if (mode == DrawMode.FREE_DRAW || mode == DrawMode.ERASE || mode == DrawMode.LINE){
             if (mode == DrawMode.ERASE) g2d.setPaint(Color.WHITE);
             g2d.drawLine(a.x, a.y, b.x, b.y);
@@ -137,6 +175,13 @@ public class WhiteBoardGUI extends JPanel {
         return;
     }
 
+    private Graphics2D getBrush(){
+        Graphics2D g2d = img.createGraphics();
+        g2d.setPaint(color);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        return g2d;
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -144,15 +189,10 @@ public class WhiteBoardGUI extends JPanel {
         g.drawImage(img, 0, 0, null);
         if (previewShape != null){
             Graphics2D g2 = (Graphics2D) g;
+            g2.setPaint(color);
+            g2.setStroke(stroke);
             g2.draw(previewShape);
         }
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Minimal Whiteboard");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(new WhiteBoardGUI());
-        frame.setSize(800, 600);
-        frame.setVisible(true);
-    }
 }
