@@ -114,10 +114,20 @@ public class WhiteBoardGUI extends JPanel {
         if (mode == DrawMode.FREE_DRAW || mode == DrawMode.ERASE){
             quickDrawShape(start, e.getPoint());
         } else if (mode == DrawMode.TEXT) {
-            // TODO: draw text
+            String input = JOptionPane.showInputDialog(this, "Enter your text:", "Input Dialog", JOptionPane.PLAIN_MESSAGE);
+            if (input != null) {
+                drawTxt(e.getPoint(), input);
+            }
         } else {
             quickDrawShape(start, e.getPoint());
         }
+    }
+
+    private void drawTxt(Point p, String txt){
+        Graphics2D g2d = getBrush();
+        g2d.drawString(txt, p.x, p.y);
+        g2d.dispose();
+        repaint();
     }
 
     private void updatePreviewShape(Point a, Point b) {
