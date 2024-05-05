@@ -21,17 +21,20 @@ public class WhiteBoardGUI extends JPanel {
     private Point start = null;
     private Point end = null;
 
+    private boolean isManager;
+
 
     enum DrawMode{
         FREE_DRAW, ERASE, LINE, RECTANGLE, CIRCLE, ELLIPSE, TEXT
     }
 
-    public WhiteBoardGUI(){
+    public WhiteBoardGUI(boolean isManager){
         setLayout(new BorderLayout());
         initStates();
         initCanvas();
         initListeners();
         initToolPanel();
+        this.isManager = isManager;
     }
 
 

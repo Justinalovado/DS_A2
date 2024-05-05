@@ -10,12 +10,13 @@ public class ListGUI extends JPanel{
     private JList<String> userList;
 
     private JButton kickBtn;
+    private boolean isManager;
 
-    public ListGUI(){
+    public ListGUI(boolean isManager){
         setLayout(new BorderLayout());
         this.listModel = new DefaultListModel<>();
-        this.listModel.addElement("User 1");
-        this.listModel.addElement("User 2");
+//        this.listModel.addElement("User 1");
+//        this.listModel.addElement("User 2");
 
         this.userList = new JList<>(listModel);
         JScrollPane listScrollPane = new JScrollPane(userList);
@@ -25,6 +26,7 @@ public class ListGUI extends JPanel{
 
         add(listScrollPane, BorderLayout.CENTER);
         add(kickBtn, BorderLayout.SOUTH);
+        this.isManager = isManager;
     }
 
     public void kickUser(ActionEvent event){

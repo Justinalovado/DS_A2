@@ -4,7 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MainGUI extends JFrame{
-    public MainGUI(String name){
+
+    public ChatGUI textPanel;
+    public ListGUI listPane;
+
+    public WhiteBoardGUI whiteBoard;
+
+    public boolean isManager;
+
+    public MainGUI(String name, boolean isManager){
         super(name);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
@@ -17,20 +25,20 @@ public class MainGUI extends JFrame{
         getContentPane().add(splitPane, BorderLayout.CENTER);
 
         // left panel for whiteboard
-        JPanel whiteBoard = new WhiteBoardGUI();
+        whiteBoard = new WhiteBoardGUI(isManager);
         splitPane.setLeftComponent(whiteBoard);
 
         // right panel for list & chat
         JPanel rightPanel = new JPanel(new GridLayout(2, 1));
 
-        JPanel listPane = new ListGUI();
+        listPane = new ListGUI(isManager);
         rightPanel.add(listPane);
 
         // Bottom half of the right panel for text input
-        JPanel textPanel = new ChatGUI();
+        textPanel = new ChatGUI(name, isManager);
         rightPanel.add(textPanel);
 
         splitPane.setRightComponent(rightPanel);
-
+        this.isManager = isManager;
     }
 }

@@ -1,19 +1,56 @@
 package GUI;
 
+import Interface.BroadCaster;
+import driver.CreateWhiteBoard;
+import driver.JoinWhiteBoard;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class ChatGUI extends JPanel{
-    public ChatGUI(){
+
+    public JTextArea textArea;
+    public JTextField textField;
+    private boolean isManager;
+    public ChatGUI(String name, boolean isManager){
         setLayout(new BorderLayout());
-        JTextArea textArea = new JTextArea();
+        textArea = new JTextArea();
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
+        textArea.setEditable(false);
         JScrollPane textAreaScrollPane = new JScrollPane(textArea);
         add(textAreaScrollPane, BorderLayout.CENTER);
 
-        JTextField textField = new JTextField();
+        textField = new JTextField();
+        textField.addActionListener(e -> {
+            String text = textField.getText();
+            if (!text.isEmpty()) {
+                appendChat(name, text);
+                textField.setText("");
+            }
+        });
         add(textField, BorderLayout.SOUTH);
         textField.setPreferredSize(new Dimension(textField.getWidth(), textField.getPreferredSize().height));
+        this.isManager = isManager;
     }
+
+    /**
+     *
+     */
+    public void appendChat(String username, String msg){
+        if (isManager){
+            textArea.append(username + ">" + msg + "\n");
+            CreateWhiteBoard.broadCaster.broadcastChatAppend(username, msg);
+        } else {
+            JoinWhiteBoard.broadCaster.broadcastChatAppend(username, msg);
+        }
+    }
+
+    /**
+     * for outer use, does not broadcast further
+     */
+    public void quiteAppendChat(String username, String msg){
+        textArea.append(username + ">" + msg + "\n");
+    }
+
 }
