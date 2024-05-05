@@ -6,6 +6,7 @@ import Interface.BroadCaster;
 import Interface.ClientInterface;
 import Interface.ManagerInterface;
 
+import javax.swing.*;
 import java.awt.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -27,6 +28,7 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
     public boolean requestJoin(ClientInterface client) throws RemoteException {
         if (!clients.contains(client)){
             clients.add(client);
+            gui.listPane.appendUser(client.getName());
             return true;
         } else {
             return false;
@@ -46,6 +48,18 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         for (ClientInterface client : clients){
             try {
                 client.updateAppendChat(name, msg);
+            } catch (RemoteException e) {
+                // TODO: handle exception (kick?)
+                System.out.println("A remote error caught by server");
+            }
+        }
+    }
+
+    @Override
+    public void broadcastUserList(DefaultListModel<String> lst) {
+        for (ClientInterface client : clients){
+            try {
+                client.updateUserList(lst);
             } catch (RemoteException e) {
                 // TODO: handle exception (kick?)
                 System.out.println("A remote error caught by server");

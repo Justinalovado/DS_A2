@@ -5,6 +5,7 @@ import Interface.BroadCaster;
 import Interface.ClientInterface;
 import Interface.ManagerInterface;
 
+import javax.swing.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -12,10 +13,12 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
 
     private MainGUI gui;
     private ManagerInterface manager;
-    public Client(MainGUI gui, ManagerInterface manager) throws RemoteException {
+    private String name;
+    public Client(MainGUI gui, ManagerInterface manager, String name) throws RemoteException {
         super();
         this.gui = gui;
         this.manager = manager;
+        this.name = name;
     }
 
     @Override
@@ -35,5 +38,18 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
         } catch (RemoteException e){
             System.out.println("A remote error caught by client");
         }
+    }
+
+    @Override
+    public void broadcastUserList(DefaultListModel<String> lst) {}
+
+    @Override
+    public void updateUserList(DefaultListModel<String> lst) throws RemoteException {
+        gui.listPane.updateUserList(lst);
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }

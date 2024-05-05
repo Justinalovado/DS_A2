@@ -23,7 +23,7 @@ public class CreateWhiteBoard {
 
         try {
             // launch handler
-            Manager manager = new Manager(gui);
+            manager = new Manager(gui);
             Registry registry = LocateRegistry.createRegistry(8080);
             registry.bind("driver.Manager", manager);
             broadCaster = manager;

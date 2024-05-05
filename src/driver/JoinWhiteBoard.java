@@ -15,6 +15,7 @@ public class JoinWhiteBoard {
     public static MainGUI gui;
     public static Client client;
     public static BroadCaster broadCaster;
+    private static String name = "User1";
     public static void main(String[] args) {
         try {
             Registry registry = LocateRegistry.getRegistry("127.0.0.1", 8080);
@@ -24,7 +25,7 @@ public class JoinWhiteBoard {
 
             // TODO: manager instantiation to be delegated to driver.Client object
             ManagerInterface serverManager = (ManagerInterface) registry.lookup("driver.Manager");
-            client = new Client(gui, serverManager);
+            client = new Client(gui, serverManager, name);
             serverManager.requestJoin(client);
             broadCaster = client;
         } catch (RemoteException | NotBoundException e) {
