@@ -1,5 +1,8 @@
 package GUI;
 
+import driver.Announcer;
+import driver.Manager;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -24,9 +27,6 @@ public class WhiteBoardGUI extends JPanel {
     private boolean isManager;
 
 
-    enum DrawMode{
-        FREE_DRAW, ERASE, LINE, RECTANGLE, CIRCLE, ELLIPSE, TEXT
-    }
 
     public WhiteBoardGUI(boolean isManager){
         setLayout(new BorderLayout());
@@ -177,6 +177,7 @@ public class WhiteBoardGUI extends JPanel {
                 g2d.draw(new Ellipse2D.Double(x, y, diameter, diameter));
             }
         }
+        Announcer.broadCaster.broadcastDrawShape(a, b, strokeWidth, color, mode);
         g2d.dispose();
         repaint();
     }
@@ -184,11 +185,40 @@ public class WhiteBoardGUI extends JPanel {
     /**
      * TODO: Not in use, for remote access, drawing shape
      */
-    private void drawShape(Point a, Point b, Color color, BasicStroke stroke, DrawMode shape){
-        return;
+    public void drawShape(Point a, Point b, float strokeWidth, Color color, DrawMode shape){
+        SwingUtilities.invokeLater(() -> {
+            Graphics2D g2d = getBrush(strokeWidth, color);
+            if (shape == DrawMode.FREE_DRAW || shape == DrawMode.ERASE || shape == DrawMode.LINE) {
+                if (shape == DrawMode.ERASE) g2d.setPaint(Color.WHITE);
+                g2d.drawLine(a.x, a.y, b.x, b.y);
+            } else {
+                int x = Math.min(a.x, b.x);
+                int y = Math.min(a.y, b.y);
+                int width = Math.abs(a.x - b.x);
+                int height = Math.abs(a.y - b.y);
+                if (shape == DrawMode.RECTANGLE) {
+                    g2d.draw(new Rectangle2D.Double(x, y, width, height));
+                } else if (shape == DrawMode.ELLIPSE) {
+                    g2d.draw(new Ellipse2D.Double(x, y, width, height));
+                } else if (shape == DrawMode.CIRCLE) {
+                    int diameter = Math.min(width, height);
+                    g2d.draw(new Ellipse2D.Double(x, y, diameter, diameter));
+                }
+            }
+            g2d.dispose();
+            repaint();
+        });
     }
 
     private Graphics2D getBrush(){
+        Graphics2D g2d = img.createGraphics();
+        g2d.setPaint(color);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        return g2d;
+    }
+
+    private Graphics2D getBrush(float strokeWidth, Color color){
         Graphics2D g2d = img.createGraphics();
         g2d.setPaint(color);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

@@ -1,6 +1,6 @@
 package driver;
 
-import GUI.ChatGUI;
+import GUI.DrawMode;
 import GUI.MainGUI;
 import Interface.BroadCaster;
 import Interface.ClientInterface;
@@ -10,17 +10,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
 public class Manager extends UnicastRemoteObject implements ManagerInterface, BroadCaster {
 //    private List<ClientInterface> clients = new ArrayList<>();
-    private Map<String, ClientInterface> clients = new HashMap<>();
+    private Map<String, ClientInterface> clients = new ConcurrentHashMap<>(); // TODO: swap to concurrent hashmap + sync method
     private MainGUI gui;
 
     public static Manager manager;
@@ -49,30 +47,54 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
     @Override
     public void broadcastChatAppend(String name, String msg) {
         // TODO: let executor run with a thread
-        clients.forEach((clientName, clientInterface) -> {
-            try {
-                clientInterface.updateAppendChat(name, msg);
-            } catch (RemoteException e) {
-                // Handle exception, perhaps by removing the client
-                System.out.println("A remote error caught by server, removing client: " + clientName);
-                clients.remove(clientName);
-                gui.listPane.removeUser(clientName);
-            }
+        executor.submit(() -> {
+            clients.forEach((clientName, clientInterface) -> {
+                try {
+                    clientInterface.updateAppendChat(name, msg);
+//                    clientInterface.getRemoteError();
+                } catch (RemoteException e) {
+                    // Handle exception, perhaps by removing the client
+                    System.out.println("A remote error caught by server, removing client: " + clientName);
+//                    clients.remove(clientName);
+//                    gui.listPane.removeUser(clientName);
+                    kickClient(clientName);
+                }
+            });
         });
     }
 
     @Override
     public void broadcastUserList(DefaultListModel<String> lst) {
         // TODO: let executor run with a thread
-        clients.forEach((clientName, clientInterface) -> {
-            try {
-                clientInterface.updateUserList(lst);
-            } catch (RemoteException e) {
-                // Handle exception, perhaps by removing the client
-                System.out.println("A remote error caught by server, removing client: " + clientName);
-                clients.remove(clientName);
-                gui.listPane.removeUser(clientName);
-            }
+        executor.submit(()->{
+            clients.forEach((clientName, clientInterface) -> {
+                try {
+                    clientInterface.updateUserList(lst);
+                } catch (RemoteException e) {
+                    // Handle exception, perhaps by removing the client
+                    System.out.println("A remote error caught by server, removing client: " + clientName);
+//                    clients.remove(clientName);
+//                    gui.listPane.removeUser(clientName);
+                    kickClient(clientName);
+                }
+            });
+        });
+    }
+
+    @Override
+    public void broadcastDrawShape(Point a, Point b, float strokeWidth, Color color, DrawMode shape) {
+        executor.submit(() -> {
+            clients.forEach((clientName, clientInterface) -> {
+                try {
+                    clientInterface.updateDrawShape(a, b, strokeWidth, color, shape);
+                } catch (RemoteException e) {
+                    // Handle exception, perhaps by removing the client
+                    System.out.println("A remote error caught by server, removing client: " + clientName);
+//                    clients.remove(clientName);
+//                    gui.listPane.removeUser(clientName);
+                    kickClient(clientName);
+                }
+            });
         });
     }
 
@@ -91,6 +113,12 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         clients.remove(name);
     }
 
+    @Override
+    public void clientDrawShape(Point a, Point b, float strokeWidth, Color color, DrawMode shape) throws RemoteException {
+        gui.whiteBoard.drawShape(a, b, strokeWidth, color, shape);
+        broadcastDrawShape(a, b, strokeWidth, color, shape);
+    }
+
     public void kickClient(String name){
         // TODO: let executor run
         ClientInterface client = clients.get(name);
@@ -102,6 +130,5 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
             }
         }
         clients.remove(name);
-//        gui.listPane.removeUser(name);
     }
 }

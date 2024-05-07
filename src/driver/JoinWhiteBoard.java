@@ -14,7 +14,6 @@ import java.rmi.registry.Registry;
 public class JoinWhiteBoard {
     public static MainGUI gui;
     public static Client client;
-    public static BroadCaster broadCaster;
     private static String name = "User1";
     public static void main(String[] args) {
         addShutdownCleaner();
@@ -28,7 +27,7 @@ public class JoinWhiteBoard {
 //            ManagerInterface serverManager = (ManagerInterface) registry.lookup("driver.Manager");
             client = new Client(gui, name);
 //            serverManager.requestJoin(client);
-            broadCaster = client;
+            Announcer.broadCaster = client;
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }

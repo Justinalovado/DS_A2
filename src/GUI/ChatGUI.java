@@ -1,6 +1,7 @@
 package GUI;
 
 import Interface.BroadCaster;
+import driver.Announcer;
 import driver.CreateWhiteBoard;
 import driver.JoinWhiteBoard;
 
@@ -40,10 +41,8 @@ public class ChatGUI extends JPanel{
     public void appendChat(String username, String msg){
         if (isManager){
             textArea.append(username + ">" + msg + "\n");
-            CreateWhiteBoard.broadCaster.broadcastChatAppend(username, msg);
-        } else {
-            JoinWhiteBoard.broadCaster.broadcastChatAppend(username, msg);
         }
+        Announcer.broadCaster.broadcastChatAppend(username, msg);
     }
 
     /**
