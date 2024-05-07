@@ -31,8 +31,6 @@ public class CreateWhiteBoard {
             System.out.println("Something wrong when putting up server");
             throw new RuntimeException(e);
         }
-
-
     }
 
 }

@@ -1,6 +1,7 @@
 package GUI;
 
 import driver.CreateWhiteBoard;
+import driver.Manager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,8 +19,6 @@ public class ListGUI extends JPanel{
     public ListGUI(boolean isManager){
         setLayout(new BorderLayout());
         this.listModel = new DefaultListModel<>();
-//        this.listModel.addElement("User 1");
-//        this.listModel.addElement("User 2");
         if (isManager) this.listModel.addElement("Manager");
 
         this.userList = new JList<>(listModel);
@@ -35,8 +34,10 @@ public class ListGUI extends JPanel{
 
     public void kickUser(ActionEvent event){
         String selected = userList.getSelectedValue(); // Get selected item
-        if (selected != null){
+        if (selected != null && isManager && !selected.equals("Manager")){
             listModel.removeElement(selected);
+            Manager.manager.kickClient(selected); // remove from existence & notify
+            Manager.manager.broadcastUserList(listModel); // update all current user
         }
     }
 
@@ -51,7 +52,6 @@ public class ListGUI extends JPanel{
 
     public void updateUserList(){
         userList.setModel(listModel);
-        System.out.println(isManager);
         if (isManager) {
             CreateWhiteBoard.manager.broadcastUserList(listModel);
         }
@@ -59,6 +59,10 @@ public class ListGUI extends JPanel{
 
     public void appendUser(String username){
         listModel.addElement(username);
+        updateUserList();
+    }
+    public void removeUser(String username){
+        listModel.removeElement(username);
         updateUserList();
     }
 }

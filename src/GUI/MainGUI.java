@@ -1,5 +1,8 @@
 package GUI;
 
+import Interface.BroadCaster;
+import driver.Client;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -9,6 +12,7 @@ public class MainGUI extends JFrame{
     public ListGUI listPane;
 
     public WhiteBoardGUI whiteBoard;
+    public JSplitPane splitPane;
 
     public boolean isManager;
 
@@ -40,5 +44,52 @@ public class MainGUI extends JFrame{
 
         splitPane.setRightComponent(rightPanel);
         this.isManager = isManager;
+//        broadCaster = bdcaster;
     }
+
+    public void promptKick(){
+        SwingUtilities.invokeLater(() -> {
+            Object[] options = {"Exit", "Reconnect"};
+
+            int choice = JOptionPane.showOptionDialog(
+                    splitPane,
+                    "You got kicked by Manager",
+                    "Connection Error",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.ERROR_MESSAGE,
+                    null,
+                    options,
+                    options[1]);
+
+            if (choice == JOptionPane.YES_OPTION) {
+                System.exit(0); // Terminate the application
+            } else if (choice == JOptionPane.NO_OPTION) {
+                Client.client.reconnect();
+            }
+        });
+
+    }
+
+
+    public void promptJoinOutcome(String outcome){
+        SwingUtilities.invokeLater(() -> {
+            if (outcome.equals("Welcome")){
+                JOptionPane.showMessageDialog(
+                        splitPane,
+                        "Join successful",
+                        outcome,
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            } else {
+                JOptionPane.showMessageDialog(
+                        splitPane,
+                        "Join fail",
+                        outcome,
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+        });
+    }
+
+
 }

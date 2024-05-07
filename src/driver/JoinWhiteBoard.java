@@ -17,19 +17,35 @@ public class JoinWhiteBoard {
     public static BroadCaster broadCaster;
     private static String name = "User1";
     public static void main(String[] args) {
+        addShutdownCleaner();
         try {
-            Registry registry = LocateRegistry.getRegistry("127.0.0.1", 8080);
+//            Registry registry = LocateRegistry.getRegistry("127.0.0.1", 8080);
 
             gui = new MainGUI("driver.Client", false); //TODO: change to input name
             SwingUtilities.invokeLater(() -> gui.setVisible(true));
 
             // TODO: manager instantiation to be delegated to driver.Client object
-            ManagerInterface serverManager = (ManagerInterface) registry.lookup("driver.Manager");
-            client = new Client(gui, serverManager, name);
-            serverManager.requestJoin(client);
+//            ManagerInterface serverManager = (ManagerInterface) registry.lookup("driver.Manager");
+            client = new Client(gui, name);
+//            serverManager.requestJoin(client);
             broadCaster = client;
-        } catch (RemoteException | NotBoundException e) {
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void addShutdownCleaner(){
+        Runtime.getRuntime().addShutdownHook(new Thread(){
+            @Override
+            public void run() {
+                if (client != null){
+                    try {
+                        client.disconnect();
+                    } catch (RemoteException e) {
+                        System.out.println("Remote error on disconnection");
+                    }
+                }
+            }
+        });
     }
 }
