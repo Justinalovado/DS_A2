@@ -38,7 +38,8 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
             String outcome = manager.requestJoin(this);
             gui.promptJoinOutcome(outcome);
         } catch (RemoteException | NotBoundException e){
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
+            System.exit(0);
         }
     }
 

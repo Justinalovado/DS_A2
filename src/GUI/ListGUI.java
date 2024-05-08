@@ -1,5 +1,6 @@
 package GUI;
 
+import driver.Announcer;
 import driver.CreateWhiteBoard;
 import driver.Manager;
 
@@ -53,7 +54,7 @@ public class ListGUI extends JPanel{
     public void updateUserList(){
         userList.setModel(listModel);
         if (isManager) {
-            CreateWhiteBoard.manager.broadcastUserList(listModel);
+            Announcer.broadCaster.broadcastUserList(listModel);
         }
     }
 

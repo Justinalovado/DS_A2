@@ -50,8 +50,8 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         executor.submit(() -> {
             clients.forEach((clientName, clientInterface) -> {
                 try {
-                    clientInterface.updateAppendChat(name, msg);
-//                    clientInterface.getRemoteError();
+//                    clientInterface.updateAppendChat(name, msg);
+                    clientInterface.getRemoteError();
                 } catch (RemoteException e) {
                     // Handle exception, perhaps by removing the client
                     System.out.println("A remote error caught by server, removing client: " + clientName);
@@ -73,8 +73,6 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
                 } catch (RemoteException e) {
                     // Handle exception, perhaps by removing the client
                     System.out.println("A remote error caught by server, removing client: " + clientName);
-//                    clients.remove(clientName);
-//                    gui.listPane.removeUser(clientName);
                     kickClient(clientName);
                 }
             });
@@ -90,8 +88,6 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
                 } catch (RemoteException e) {
                     // Handle exception, perhaps by removing the client
                     System.out.println("A remote error caught by server, removing client: " + clientName);
-//                    clients.remove(clientName);
-//                    gui.listPane.removeUser(clientName);
                     kickClient(clientName);
                 }
             });
@@ -121,6 +117,7 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
 
     public void kickClient(String name){
         // TODO: let executor run
+        gui.listPane.removeUser(name);
         ClientInterface client = clients.get(name);
         if (client != null){
             try{
