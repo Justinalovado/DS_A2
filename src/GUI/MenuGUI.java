@@ -49,6 +49,40 @@ public class MenuGUI extends JMenuBar {
         Announcer.broadCaster.broadcastOverhaulBoard(board.getImg());
     }
     private void handleOpen(ActionEvent actionEvent) {
+        SwingWorker<BufferedImage, Void> worker = new SwingWorker<BufferedImage, Void>() {
+            @Override
+            protected BufferedImage doInBackground() throws Exception {
+                JFileChooser fileChooser = new JFileChooser();
+                if (fileChooser.showOpenDialog(board) == JFileChooser.APPROVE_OPTION) {
+                    File openFile = fileChooser.getSelectedFile();
+                    try {
+                        return ImageIO.read(openFile);
+                    } catch (IOException e) {
+                        System.out.println("Failed to open file");
+                        return null;
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    BufferedImage loadedImg = get();
+                    if (loadedImg != null) {
+                        board.setImg(loadedImg);  // Assuming 'board' has a method setImage(BufferedImage)
+                        board.repaint();
+                        Announcer.broadCaster.broadcastOverhaulBoard(loadedImg);
+                        JOptionPane.showMessageDialog(board, "Image Opened Successfully");
+                    } else {
+                        JOptionPane.showMessageDialog(board, "Open Failed");
+                    }
+                } catch (ExecutionException | InterruptedException e) {
+                    JOptionPane.showMessageDialog(board, "Error during image open: " + e.getCause().getMessage());
+                }
+            }
+        };
+        worker.execute();
     }
 
     private void handleSave(ActionEvent actionEvent) {
@@ -66,7 +100,6 @@ public class MenuGUI extends JMenuBar {
                         System.out.println("Failed to save file");
                         return false;
                     }
-//                    return false;
                 }
 
                 @Override

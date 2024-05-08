@@ -296,4 +296,8 @@ public class WhiteBoardGUI extends JPanel {
     public BufferedImage getImg() {
         return img;
     }
+
+    public void setImg(BufferedImage img) {
+        this.img = img;
+    }
 }
