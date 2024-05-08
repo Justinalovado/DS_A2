@@ -94,10 +94,28 @@ public class WhiteBoardGUI extends JPanel {
             strokeWidth = strokeWidthSelector.getValue();
         });
 
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu fileMenu = new JMenu("File");
+
+        JMenuItem New = new JMenuItem("New");
+        fileMenu.add(New);
+        JMenuItem Open = new JMenuItem("Open");
+        fileMenu.add(Open);
+        JMenuItem Save = new JMenuItem("Save");
+        fileMenu.add(Save);
+        JMenuItem SaveAs = new JMenuItem("SaveAs");
+        fileMenu.add(SaveAs);
+        JMenuItem Close = new JMenuItem("Close");
+        fileMenu.add(Close);
+
+        menuBar.add(fileMenu);
+
+        toolPanel.add(menuBar);
         toolPanel.add(setColorBtn);
         toolPanel.add(drawModeMenu);
         toolPanel.add(strokeWidthSelector);
-        add(toolPanel, BorderLayout.SOUTH);
+        add(toolPanel, BorderLayout.NORTH);
     }
 
     private void onMouseDrag(MouseEvent e){
