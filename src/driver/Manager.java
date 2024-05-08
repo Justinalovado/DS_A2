@@ -46,7 +46,6 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
 
     @Override
     public void broadcastChatAppend(String name, String msg) {
-        // TODO: let executor run with a thread
         executor.submit(() -> {
             clients.forEach((clientName, clientInterface) -> {
                 try {
@@ -61,7 +60,6 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
 
     @Override
     public void broadcastUserList(DefaultListModel<String> lst) {
-        // TODO: let executor run with a thread
         executor.submit(()->{
             clients.forEach((clientName, clientInterface) -> {
                 try {
@@ -133,17 +131,18 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
     }
 
     public void kickClient(String name){
-        // TODO: let executor run
-        gui.listPane.removeUser(name);
-        ClientInterface client = clients.get(name);
-        if (client != null){
-            try{
-                client.kickedByManager();
-            } catch (RemoteException e){
-                System.out.println("Tried to inform kicked user but failed");
+        executor.submit(() -> {
+            gui.listPane.removeUser(name);
+            ClientInterface client = clients.get(name);
+            if (client != null){
+                try{
+                    client.kickedByManager();
+                } catch (RemoteException e){
+                    System.out.println("Tried to inform kicked user but failed");
+                }
             }
-        }
-        clients.remove(name);
+            clients.remove(name);
+        });
     }
 
     public void notifyShutdown(){

@@ -14,7 +14,6 @@ public class CreateWhiteBoard {
 
     public static MainGUI gui;
     public static Manager manager;
-//    public static BroadCaster broadCaster;
 
     public static void main(String[] args) {
         addShutdownCleaner();
@@ -27,7 +26,6 @@ public class CreateWhiteBoard {
             manager = new Manager(gui);
             Registry registry = LocateRegistry.createRegistry(8080);
             registry.bind("driver.Manager", manager);
-//            broadCaster = manager;
             Announcer.broadCaster = manager;
         } catch (RemoteException | AlreadyBoundException e) {
             System.out.println("Something wrong when putting up server");

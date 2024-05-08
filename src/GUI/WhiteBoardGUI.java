@@ -190,7 +190,7 @@ public class WhiteBoardGUI extends JPanel {
     }
 
     /**
-     * TODO: Not in use, for remote access, drawing shape
+     * for remote access, drawing shape
      */
     public void drawShape(Point a, Point b, float strokeWidth, Color color, DrawMode shape){
         SwingUtilities.invokeLater(() -> {

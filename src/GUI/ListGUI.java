@@ -16,7 +16,6 @@ public class ListGUI extends JPanel{
     private JButton kickBtn;
     private boolean isManager;
 
-    // TODO: implement Kick functionality
     public ListGUI(boolean isManager){
         setLayout(new BorderLayout());
         this.listModel = new DefaultListModel<>();

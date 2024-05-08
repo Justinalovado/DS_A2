@@ -10,4 +10,6 @@ public interface BroadCaster {
     void broadcastUserList(DefaultListModel<String> lst);
     void broadcastDrawShape(Point a, Point b, float strokeWidth, Color color, DrawMode shape);
     void broadcastDrawTxt(Point a, Color c, String txt);
+
+    // TODO: build board & chat update cycle (only from server)
 }

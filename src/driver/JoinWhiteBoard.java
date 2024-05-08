@@ -1,15 +1,9 @@
 package driver;
 
 import GUI.MainGUI;
-import Interface.BroadCaster;
-import Interface.ClientInterface;
-import Interface.ManagerInterface;
 
 import javax.swing.*;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 
 public class JoinWhiteBoard {
     public static MainGUI gui;
@@ -18,7 +12,6 @@ public class JoinWhiteBoard {
     public static void main(String[] args) {
         addShutdownCleaner();
         try {
-//            Registry registry = LocateRegistry.getRegistry("127.0.0.1", 8080);
 
             gui = new MainGUI("driver.Client", false); //TODO: change to input name
             SwingUtilities.invokeLater(() -> gui.setVisible(true));
