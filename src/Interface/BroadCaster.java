@@ -9,4 +9,5 @@ public interface BroadCaster {
     void broadcastChatAppend(String name, String msg);
     void broadcastUserList(DefaultListModel<String> lst);
     void broadcastDrawShape(Point a, Point b, float strokeWidth, Color color, DrawMode shape);
+    void broadcastDrawTxt(Point a, Color c, String txt);
 }

@@ -72,6 +72,15 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
     }
 
     @Override
+    public void broadcastDrawTxt(Point a, Color c, String txt) {
+        try {
+            manager.clientDrawTxt(a, c, txt);
+        } catch (RemoteException e) {
+            System.out.println("A remote error caught by client");
+        }
+    }
+
+    @Override
     public void updateUserList(DefaultListModel<String> lst) throws RemoteException {
         gui.listPane.updateUserList(lst);
     }
@@ -79,6 +88,11 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
     @Override
     public void updateDrawShape(Point a, Point b, float strokeWidth, Color color, DrawMode shape) {
         gui.whiteBoard.drawShape(a, b, strokeWidth, color, shape);
+    }
+
+    @Override
+    public void updateDrawTxt(Point a, Color c, String txt) throws RemoteException {
+        gui.whiteBoard.updateDrawTxt(a, c, txt);
     }
 
     public void disconnect() throws RemoteException {

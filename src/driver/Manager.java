@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 
 public class Manager extends UnicastRemoteObject implements ManagerInterface, BroadCaster {
 //    private List<ClientInterface> clients = new ArrayList<>();
-    private Map<String, ClientInterface> clients = new ConcurrentHashMap<>(); // TODO: swap to concurrent hashmap + sync method
+    private Map<String, ClientInterface> clients = new ConcurrentHashMap<>(); // TODO: Make method sync
     private MainGUI gui;
 
     public static Manager manager;
@@ -50,13 +50,9 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         executor.submit(() -> {
             clients.forEach((clientName, clientInterface) -> {
                 try {
-//                    clientInterface.updateAppendChat(name, msg);
-                    clientInterface.getRemoteError();
+                    clientInterface.updateAppendChat(name, msg);
                 } catch (RemoteException e) {
-                    // Handle exception, perhaps by removing the client
                     System.out.println("A remote error caught by server, removing client: " + clientName);
-//                    clients.remove(clientName);
-//                    gui.listPane.removeUser(clientName);
                     kickClient(clientName);
                 }
             });
@@ -94,6 +90,21 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         });
     }
 
+    @Override
+    public void broadcastDrawTxt(Point a, Color c, String txt) {
+        executor.submit(() -> {
+            clients.forEach((clientName, clientInterface) -> {
+                try {
+                    clientInterface.updateDrawTxt(a, c, txt);
+                } catch (RemoteException e) {
+                    // Handle exception, perhaps by removing the client
+                    System.out.println("A remote error caught by server, removing client: " + clientName);
+                    kickClient(clientName);
+                }
+            });
+        });
+    }
+
     /**
      * called from client, hits server, server update own chat interface &
      */
@@ -113,6 +124,12 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
     public void clientDrawShape(Point a, Point b, float strokeWidth, Color color, DrawMode shape) throws RemoteException {
         gui.whiteBoard.drawShape(a, b, strokeWidth, color, shape);
         broadcastDrawShape(a, b, strokeWidth, color, shape);
+    }
+
+    @Override
+    public void clientDrawTxt(Point p, Color c, String txt) throws RemoteException {
+        gui.whiteBoard.updateDrawTxt(p, c, txt);
+        broadcastDrawTxt(p, c, txt);
     }
 
     public void kickClient(String name){

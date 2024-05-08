@@ -20,6 +20,7 @@ public class MainGUI extends JFrame{
         super(name);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
+        setResizable(false);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setDividerLocation((int) (getWidth() * 0.66));
@@ -44,7 +45,6 @@ public class MainGUI extends JFrame{
 
         splitPane.setRightComponent(rightPanel);
         this.isManager = isManager;
-//        broadCaster = bdcaster;
     }
 
     public void promptKick(){

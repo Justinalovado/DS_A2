@@ -14,4 +14,5 @@ public interface ManagerInterface extends Remote {
     void clientQuit(ClientInterface client) throws RemoteException;
     void clientDrawShape(Point a, Point b, float strokeWidth, Color color, DrawMode shape) throws RemoteException;
 //    void testDrawShape(DrawMode shape) throws RemoteException;
+    void clientDrawTxt(Point p, Color c, String txt) throws RemoteException;
 }

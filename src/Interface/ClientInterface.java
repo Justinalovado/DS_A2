@@ -12,6 +12,7 @@ public interface ClientInterface extends Remote {
     void updateAppendChat(String name, String msg) throws RemoteException;
     void updateUserList(DefaultListModel<String> lst) throws RemoteException;
     void updateDrawShape(Point a, Point b, float strokeWidth, Color color, DrawMode shape) throws RemoteException;
+    void updateDrawTxt(Point a, Color c, String txt) throws RemoteException;
 //    void disconnect() throws RemoteException;
     void kickedByManager() throws RemoteException;
     void getRemoteError() throws RemoteException;

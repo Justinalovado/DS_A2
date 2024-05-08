@@ -1,7 +1,6 @@
 package GUI;
 
 import driver.Announcer;
-import driver.Manager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -129,6 +128,14 @@ public class WhiteBoardGUI extends JPanel {
     private void drawTxt(Point p, String txt){
         Graphics2D g2d = getBrush();
         g2d.drawString(txt, p.x, p.y);
+        Announcer.broadCaster.broadcastDrawTxt(p, color, txt);
+        g2d.dispose();
+        repaint();
+    }
+
+    public void updateDrawTxt(Point p, Color c, String txt){
+        Graphics2D g2d = getBrush(c);
+        g2d.drawString(txt, p.x, p.y);
         g2d.dispose();
         repaint();
     }
@@ -211,6 +218,22 @@ public class WhiteBoardGUI extends JPanel {
     }
 
     private Graphics2D getBrush(){
+        Graphics2D g2d = img.createGraphics();
+        g2d.setPaint(color);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        return g2d;
+    }
+
+    private Graphics2D getBrush(Color color){
+        Graphics2D g2d = img.createGraphics();
+        g2d.setPaint(color);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        return g2d;
+    }
+
+    private Graphics2D getBrush(float strokeWidth){
         Graphics2D g2d = img.createGraphics();
         g2d.setPaint(color);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
