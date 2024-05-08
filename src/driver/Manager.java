@@ -10,7 +10,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -41,6 +40,8 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         if (!clients.containsKey(clientName)){
             clients.put(clientName, client);
             gui.listPane.appendUser(clientName);
+            broadcastOverhaulBoard(gui.whiteBoard.getImg());
+            broadcastOverhaulChat(gui.chatPanel.textArea.getText());
             return "Welcome";
         } else {
             return "Duplicate Name, try another";
@@ -114,7 +115,9 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
             clients.forEach((clientName, clientInterface) -> {
                 try {
                     byte[] imgByte = serializeImage(img);
-                    clientInterface.updateOverhaulBoard(imgByte);
+                    if (img != null) {
+                        clientInterface.updateOverhaulBoard(imgByte);
+                    }
                 } catch (RemoteException e) {
                     // Handle exception, perhaps by removing the client
                     System.out.println("A remote error caught by server, removing client: " + clientName);
@@ -123,6 +126,22 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
             });
         });
     }
+
+    @Override
+    public void broadcastOverhaulChat(String chat) {
+        executor.submit(() -> {
+            clients.forEach((clientName, clientInterface) -> {
+                try {
+                    clientInterface.updateOverhaulChat(chat);
+                } catch (RemoteException e) {
+                    // Handle exception, perhaps by removing the client
+                    System.out.println("A remote error caught by server, removing client: " + clientName);
+                    kickClient(clientName);
+                }
+            });
+        });
+    }
+
     // TODO: put to utility
     private byte[] serializeImage(BufferedImage img){
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()){
@@ -140,7 +159,7 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
      */
     @Override
     public void clientUpdateAppendChat(String name, String msg) throws RemoteException {
-        gui.textPanel.appendChat(name, msg);
+        gui.chatPanel.appendChat(name, msg);
     }
 
     @Override

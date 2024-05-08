@@ -49,7 +49,7 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
 
     @Override
     public void updateAppendChat(String name, String msg) throws RemoteException {
-        gui.textPanel.quiteAppendChat(name, msg);
+        gui.chatPanel.quiteAppendChat(name, msg);
     }
 
     @Override
@@ -85,7 +85,12 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
 
     @Override
     public void broadcastOverhaulBoard(BufferedImage img) {
+        // pass
+    }
 
+    @Override
+    public void broadcastOverhaulChat(String chat) {
+        // pass
     }
 
     @Override
@@ -109,6 +114,11 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
         if (img != null){
             gui.whiteBoard.overhaulBoard(img);
         }
+    }
+
+    @Override
+    public void updateOverhaulChat(String chat) throws RemoteException {
+        gui.chatPanel.textArea.setText(chat);
     }
 
     // TODO: put to utility

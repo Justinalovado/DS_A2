@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class MainGUI extends JFrame{
 
-    public ChatGUI textPanel;
+    public ChatGUI chatPanel;
     public ListGUI listPane;
 
     public WhiteBoardGUI whiteBoard;
@@ -40,8 +40,8 @@ public class MainGUI extends JFrame{
         rightPanel.add(listPane);
 
         // Bottom half of the right panel for text input
-        textPanel = new ChatGUI(name, isManager);
-        rightPanel.add(textPanel);
+        chatPanel = new ChatGUI(name, isManager);
+        rightPanel.add(chatPanel);
 
         splitPane.setRightComponent(rightPanel);
         this.isManager = isManager;

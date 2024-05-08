@@ -12,5 +12,6 @@ public interface BroadCaster {
     void broadcastDrawShape(Point a, Point b, float strokeWidth, Color color, DrawMode shape);
     void broadcastDrawTxt(Point a, Color c, String txt);
     void broadcastOverhaulBoard(BufferedImage img);
+    void broadcastOverhaulChat(String chat);
     // TODO: build board & chat update cycle (only from server)
 }
