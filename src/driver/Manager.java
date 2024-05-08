@@ -123,7 +123,7 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
             });
         });
     }
-
+    // TODO: put to utility
     private byte[] serializeImage(BufferedImage img){
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()){
             ImageIO.write(img, "png", baos);

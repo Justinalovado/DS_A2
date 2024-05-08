@@ -103,16 +103,4 @@ public class MainGUI extends JFrame{
         });
     }
     // TODO: build file tool options
-    // NOTE:
-    // 1. create overhaulUpdate methods in GUI
-    // 2. add file manipulation tool option
-    //      - New: white all, file pointer to nothing, enable all operation
-    //      - Save: If file pointer==null, to save as, else create new thread to read buffered img
-    //      - Save ass: prompt file chooser, if fp==null, set fp to new fp, else fp not change, create new file
-    //      - close: keep client, but prompt them canvas close, disable all operation
-    // 3. add notif to client on file update
-    // 4. build runnable jar with 2 main
-    // 5. switch user name to CLI args
-    // 6. Create Join approved & reject
-
 }

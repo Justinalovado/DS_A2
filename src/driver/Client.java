@@ -111,6 +111,7 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
         }
     }
 
+    // TODO: put to utility
     private BufferedImage deserializeImage(byte[] imgByte){
         try(ByteArrayInputStream in = new ByteArrayInputStream(imgByte)){
             return ImageIO.read(in);
