@@ -29,7 +29,7 @@ public class CreateWhiteBoard {
             Announcer.broadCaster = manager;
         } catch (RemoteException | AlreadyBoundException e) {
             System.out.println("Something wrong when putting up server");
-            throw new RuntimeException(e);
+            System.exit(0);
         }
     }
     private static void addShutdownCleaner(){

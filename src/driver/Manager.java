@@ -6,8 +6,13 @@ import Interface.BroadCaster;
 import Interface.ClientInterface;
 import Interface.ManagerInterface;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
@@ -101,6 +106,33 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
                 }
             });
         });
+    }
+
+    @Override
+    public void broadcastOverhaulBoard(BufferedImage img) {
+        executor.submit(() -> {
+            clients.forEach((clientName, clientInterface) -> {
+                try {
+                    byte[] imgByte = serializeImage(img);
+                    clientInterface.updateOverhaulBoard(imgByte);
+                } catch (RemoteException e) {
+                    // Handle exception, perhaps by removing the client
+                    System.out.println("A remote error caught by server, removing client: " + clientName);
+                    kickClient(clientName);
+                }
+            });
+        });
+    }
+
+    private byte[] serializeImage(BufferedImage img){
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()){
+            ImageIO.write(img, "png", baos);
+            baos.flush();
+            return baos.toByteArray();
+        } catch (IOException e) {
+            System.out.println("Error on serializing bufferedImage");
+            return null;
+        }
     }
 
     /**

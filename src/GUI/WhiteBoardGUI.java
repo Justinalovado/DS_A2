@@ -65,7 +65,7 @@ public class WhiteBoardGUI extends JPanel {
         this.stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         this.mode = DrawMode.FREE_DRAW;
     }
-    private void initCanvas() {
+    public void initCanvas() {
         // initialize canvas
         this.img = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = this.img.createGraphics();
@@ -95,7 +95,7 @@ public class WhiteBoardGUI extends JPanel {
         });
 
 
-        if (isManager) toolPanel.add(makeFileMenu());
+        if (isManager) toolPanel.add(new MenuGUI(this));
 
         toolPanel.add(setColorBtn);
         toolPanel.add(drawModeMenu);
@@ -103,24 +103,24 @@ public class WhiteBoardGUI extends JPanel {
         add(toolPanel, BorderLayout.NORTH);
     }
 
-    private JMenuBar makeFileMenu() {
-        JMenuBar menuBar = new JMenuBar();
-        JMenu fileMenu = new JMenu("File");
-
-        JMenuItem New = new JMenuItem("New");
-        fileMenu.add(New);
-        JMenuItem Open = new JMenuItem("Open");
-        fileMenu.add(Open);
-        JMenuItem Save = new JMenuItem("Save");
-        fileMenu.add(Save);
-        JMenuItem SaveAs = new JMenuItem("SaveAs");
-        fileMenu.add(SaveAs);
-        JMenuItem Close = new JMenuItem("Close");
-        fileMenu.add(Close);
-
-        menuBar.add(fileMenu);
-        return menuBar;
-    }
+//    private JMenuBar makeFileMenu() {
+//        JMenuBar menuBar = new JMenuBar();
+//        JMenu fileMenu = new JMenu("File");
+//
+//        JMenuItem New = new JMenuItem("New");
+//        fileMenu.add(New);
+//        JMenuItem Open = new JMenuItem("Open");
+//        fileMenu.add(Open);
+//        JMenuItem Save = new JMenuItem("Save");
+//        fileMenu.add(Save);
+//        JMenuItem SaveAs = new JMenuItem("SaveAs");
+//        fileMenu.add(SaveAs);
+//        JMenuItem Close = new JMenuItem("Close");
+//        fileMenu.add(Close);
+//
+//        menuBar.add(fileMenu);
+//        return menuBar;
+//    }
 
     private void onMouseDrag(MouseEvent e){
         if (mode == DrawMode.FREE_DRAW || mode == DrawMode.ERASE){
@@ -242,6 +242,11 @@ public class WhiteBoardGUI extends JPanel {
         });
     }
 
+    public void overhaulBoard(BufferedImage img){
+        this.img = img;
+        repaint();
+    }
+
     // ops /////////////////////////////////////////////////////////////////////////////////
     // util ////////////////////////////////////////////////////////////////////////////////////////
     private Graphics2D getBrush(){
@@ -288,4 +293,7 @@ public class WhiteBoardGUI extends JPanel {
         }
     }
 
+    public BufferedImage getImg() {
+        return img;
+    }
 }

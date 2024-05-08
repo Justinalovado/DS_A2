@@ -6,8 +6,12 @@ import Interface.BroadCaster;
 import Interface.ClientInterface;
 import Interface.ManagerInterface;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -38,8 +42,6 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
             String outcome = manager.requestJoin(this);
             gui.promptJoinOutcome(outcome);
         } catch (RemoteException | NotBoundException e){
-//            System.err.println(e.getMessage());
-//            System.exit(0);
             gui.promptShutdownMessage("Cannot find Server");
         }
     }
@@ -82,6 +84,11 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
     }
 
     @Override
+    public void broadcastOverhaulBoard(BufferedImage img) {
+
+    }
+
+    @Override
     public void updateUserList(DefaultListModel<String> lst) throws RemoteException {
         gui.listPane.updateUserList(lst);
     }
@@ -94,6 +101,23 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
     @Override
     public void updateDrawTxt(Point a, Color c, String txt) throws RemoteException {
         gui.whiteBoard.updateDrawTxt(a, c, txt);
+    }
+
+    @Override
+    public void updateOverhaulBoard(byte[] imgByte) throws RemoteException {
+        BufferedImage img = deserializeImage(imgByte);
+        if (img != null){
+            gui.whiteBoard.overhaulBoard(img);
+        }
+    }
+
+    private BufferedImage deserializeImage(byte[] imgByte){
+        try(ByteArrayInputStream in = new ByteArrayInputStream(imgByte)){
+            return ImageIO.read(in);
+        }catch (IOException e){
+            System.out.println("Error on deserializing imageBytes");
+            return null;
+        }
     }
 
     public void disconnect() throws RemoteException {
