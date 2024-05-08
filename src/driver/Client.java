@@ -38,8 +38,9 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
             String outcome = manager.requestJoin(this);
             gui.promptJoinOutcome(outcome);
         } catch (RemoteException | NotBoundException e){
-            System.err.println(e.getMessage());
-            System.exit(0);
+//            System.err.println(e.getMessage());
+//            System.exit(0);
+            gui.promptShutdownMessage("Cannot find Server");
         }
     }
 
@@ -105,9 +106,12 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
     }
 
     @Override
-    public void getRemoteError() throws RemoteException {
-        throw new RemoteException();
+    public void managerShutdown() throws RemoteException {
+        gui.promptShutdownMessage("Server is down, retry later");
     }
+
+    @Override
+    public void getRemoteError() throws RemoteException { throw new RemoteException();}
 
     @Override
     public String getName() {

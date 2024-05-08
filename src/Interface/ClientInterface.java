@@ -15,6 +15,7 @@ public interface ClientInterface extends Remote {
     void updateDrawTxt(Point a, Color c, String txt) throws RemoteException;
 //    void disconnect() throws RemoteException;
     void kickedByManager() throws RemoteException;
+    void managerShutdown() throws RemoteException;
     void getRemoteError() throws RemoteException;
     String getName() throws RemoteException;
 }

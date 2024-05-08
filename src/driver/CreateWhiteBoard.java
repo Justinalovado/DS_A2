@@ -17,6 +17,7 @@ public class CreateWhiteBoard {
 //    public static BroadCaster broadCaster;
 
     public static void main(String[] args) {
+        addShutdownCleaner();
         // launching GUI
         MainGUI gui = new MainGUI("driver.Manager", true);
         SwingUtilities.invokeLater(() -> gui.setVisible(true));
@@ -33,5 +34,14 @@ public class CreateWhiteBoard {
             throw new RuntimeException(e);
         }
     }
-    // TODO: add shutdown hook to end executors
+    private static void addShutdownCleaner(){
+        Runtime.getRuntime().addShutdownHook(new Thread(){
+            @Override
+            public void run() {
+                if (manager != null){
+                    manager.notifyShutdown();
+                }
+            }
+        });
+    }
 }

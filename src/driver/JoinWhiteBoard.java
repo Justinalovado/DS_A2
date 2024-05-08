@@ -23,10 +23,7 @@ public class JoinWhiteBoard {
             gui = new MainGUI("driver.Client", false); //TODO: change to input name
             SwingUtilities.invokeLater(() -> gui.setVisible(true));
 
-            // TODO: manager instantiation to be delegated to driver.Client object
-//            ManagerInterface serverManager = (ManagerInterface) registry.lookup("driver.Manager");
             client = new Client(gui, name);
-//            serverManager.requestJoin(client);
             Announcer.broadCaster = client;
         } catch (RemoteException e) {
             throw new RuntimeException(e);
@@ -40,8 +37,8 @@ public class JoinWhiteBoard {
                 if (client != null){
                     try {
                         client.disconnect();
-                    } catch (RemoteException e) {
-                        System.out.println("Remote error on disconnection");
+                    } catch (RemoteException | NullPointerException e) {
+                        System.out.println("Error on disconnect");
                     }
                 }
             }

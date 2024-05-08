@@ -1,6 +1,5 @@
 package GUI;
 
-import Interface.BroadCaster;
 import driver.Client;
 
 import javax.swing.*;
@@ -52,7 +51,7 @@ public class MainGUI extends JFrame{
             Object[] options = {"Exit", "Reconnect"};
 
             int choice = JOptionPane.showOptionDialog(
-                    splitPane,
+                    this,
                     "You got kicked by Manager",
                     "Connection Error",
                     JOptionPane.YES_NO_OPTION,
@@ -75,14 +74,14 @@ public class MainGUI extends JFrame{
         SwingUtilities.invokeLater(() -> {
             if (outcome.equals("Welcome")){
                 JOptionPane.showMessageDialog(
-                        splitPane,
+                        this,
                         "Join successful",
                         outcome,
                         JOptionPane.INFORMATION_MESSAGE
                 );
             } else {
                 JOptionPane.showMessageDialog(
-                        splitPane,
+                        this,
                         "Join fail",
                         outcome,
                         JOptionPane.INFORMATION_MESSAGE
@@ -91,5 +90,16 @@ public class MainGUI extends JFrame{
         });
     }
 
+    public void promptShutdownMessage(String msg){
+        SwingUtilities.invokeLater(() -> {
+            JOptionPane.showMessageDialog(
+                    this,
+                    msg,
+                    "Shutting down",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            System.exit(0);
+        });
+    }
 
 }

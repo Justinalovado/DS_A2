@@ -145,4 +145,16 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         }
         clients.remove(name);
     }
+
+    public void notifyShutdown(){
+        clients.forEach((clientName, clientInterface) -> {
+            try {
+                clientInterface.managerShutdown();
+            } catch (RemoteException e) {
+                // Handle exception, perhaps by removing the client
+                System.out.println("A remote error caught by server, removing client: " + clientName);
+                kickClient(clientName);
+            }
+        });
+    }
 }
