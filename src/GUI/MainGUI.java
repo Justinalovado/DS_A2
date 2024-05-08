@@ -17,6 +17,7 @@ public class MainGUI extends JFrame{
 
     public MainGUI(String name, boolean isManager){
         super(name);
+        System.out.println(isManager);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
         setResizable(false);

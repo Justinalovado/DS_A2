@@ -28,15 +28,15 @@ public class WhiteBoardGUI extends JPanel {
 
 
     public WhiteBoardGUI(boolean isManager){
+        this.isManager = isManager;
         setLayout(new BorderLayout());
         initStates();
         initCanvas();
         initListeners();
         initToolPanel();
-        this.isManager = isManager;
     }
 
-
+    // inits /////////////////////////////////////////////////////////////////////////////////
     private void initListeners() {
         // attach listeners
         addMouseListener(new MouseAdapter() {
@@ -95,6 +95,15 @@ public class WhiteBoardGUI extends JPanel {
         });
 
 
+        if (isManager) toolPanel.add(makeFileMenu());
+
+        toolPanel.add(setColorBtn);
+        toolPanel.add(drawModeMenu);
+        toolPanel.add(strokeWidthSelector);
+        add(toolPanel, BorderLayout.NORTH);
+    }
+
+    private JMenuBar makeFileMenu() {
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
 
@@ -110,12 +119,7 @@ public class WhiteBoardGUI extends JPanel {
         fileMenu.add(Close);
 
         menuBar.add(fileMenu);
-
-        toolPanel.add(menuBar);
-        toolPanel.add(setColorBtn);
-        toolPanel.add(drawModeMenu);
-        toolPanel.add(strokeWidthSelector);
-        add(toolPanel, BorderLayout.NORTH);
+        return menuBar;
     }
 
     private void onMouseDrag(MouseEvent e){
@@ -142,6 +146,9 @@ public class WhiteBoardGUI extends JPanel {
             quickDrawShape(start, e.getPoint());
         }
     }
+
+    // inits /////////////////////////////////////////////////////////////////////////////////
+    // ops /////////////////////////////////////////////////////////////////////////////////
 
     private void drawTxt(Point p, String txt){
         Graphics2D g2d = getBrush();
@@ -235,6 +242,8 @@ public class WhiteBoardGUI extends JPanel {
         });
     }
 
+    // ops /////////////////////////////////////////////////////////////////////////////////
+    // util ////////////////////////////////////////////////////////////////////////////////////////
     private Graphics2D getBrush(){
         Graphics2D g2d = img.createGraphics();
         g2d.setPaint(color);

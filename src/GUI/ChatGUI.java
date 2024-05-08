@@ -14,6 +14,7 @@ public class ChatGUI extends JPanel{
     public JTextField textField;
     private boolean isManager;
     public ChatGUI(String name, boolean isManager){
+        this.isManager = isManager;
         setLayout(new BorderLayout());
         textArea = new JTextArea();
         textArea.setLineWrap(true);
@@ -32,7 +33,6 @@ public class ChatGUI extends JPanel{
         });
         add(textField, BorderLayout.SOUTH);
         textField.setPreferredSize(new Dimension(textField.getWidth(), textField.getPreferredSize().height));
-        this.isManager = isManager;
     }
 
     /**
