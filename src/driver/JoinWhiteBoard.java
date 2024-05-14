@@ -8,18 +8,39 @@ import java.rmi.RemoteException;
 public class JoinWhiteBoard {
     public static MainGUI gui;
     public static Client client;
-    private static String name = "User1";
+
     public static void main(String[] args) {
         addShutdownCleaner();
+        readInput(args);
+
         try {
 
-            gui = new MainGUI("driver.Client", false); //TODO: change to input name
+            gui = new MainGUI(Announcer.name, false); //TODO: change to input name
             SwingUtilities.invokeLater(() -> gui.setVisible(true));
 
-            client = new Client(gui, name);
+            client = new Client(gui, Announcer.name);
             Announcer.broadCaster = client;
         } catch (RemoteException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static void readInput(String[] args){
+        try {
+            Announcer.name = args[2];
+        } catch (ArrayIndexOutOfBoundsException e){
+            System.out.println("Client name not provided, using default...");
+            int randomInt = java.util.concurrent.ThreadLocalRandom.current().nextInt(10000);
+            Announcer.setDefaultName("Client" + randomInt);
+        }
+
+        try {
+            Announcer.SESSION_PORT = Integer.parseInt(args[1]);
+            Announcer.SESSION_IP = args[0];
+            System.setProperty("java.rmi.server.hostname", Announcer.SESSION_IP);
+        } catch (ArrayIndexOutOfBoundsException e){
+            System.out.println("Not enough argument, using default...");
+            Announcer.setDefaultSessionAddr();
         }
     }
 

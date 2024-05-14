@@ -19,7 +19,7 @@ public class ListGUI extends JPanel{
     public ListGUI(boolean isManager){
         setLayout(new BorderLayout());
         this.listModel = new DefaultListModel<>();
-        if (isManager) this.listModel.addElement("Manager");
+        if (isManager) this.listModel.addElement(Announcer.name);
 
         this.userList = new JList<>(listModel);
         JScrollPane listScrollPane = new JScrollPane(userList);
@@ -34,7 +34,7 @@ public class ListGUI extends JPanel{
 
     public void kickUser(ActionEvent event){
         String selected = userList.getSelectedValue(); // Get selected item
-        if (selected != null && isManager && !selected.equals("Manager")){
+        if (selected != null && isManager && !selected.equals(Announcer.name)){
             listModel.removeElement(selected);
             Manager.manager.kickClient(selected); // remove from existence & notify
             Manager.manager.broadcastUserList(listModel); // update all current user

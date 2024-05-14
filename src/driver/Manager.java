@@ -37,7 +37,7 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
     @Override
     public String requestJoin(ClientInterface client) throws RemoteException {
         String clientName = client.getName();
-        if (!clients.containsKey(clientName)){
+        if (!clients.containsKey(clientName) || !clientName.equals(Announcer.name)){
             clients.put(clientName, client);
             gui.listPane.appendUser(clientName);
             broadcastOverhaulBoard(gui.whiteBoard.getImg());

@@ -23,23 +23,23 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
     public static Client client;
     private MainGUI gui;
     private ManagerInterface manager;
-    private String name;
+//    private String name;
 
-    private String addr = "127.0.0.1";
-    private int port = 8080;
+//    private String addr = "127.0.0.1";
+//    private int port = 8080;
     public Client(MainGUI gui, String name) throws RemoteException {
         super();
         this.gui = gui;
-        this.name = name;
+//        this.name = name;
         reconnect();
         client = this;
     }
 
     public void reconnect(){
         try{
-            Registry registry = LocateRegistry.getRegistry(addr, port);
+            Registry registry = LocateRegistry.getRegistry(Announcer.SESSION_IP, Announcer.SESSION_PORT);
             this.manager = (ManagerInterface) registry.lookup("driver.Manager");
-            String outcome = manager.requestJoin(this);
+            String outcome = manager.requestJoin(this); // wrap in method to add prompt before request
             gui.promptJoinOutcome(outcome);
 //            Announcer.broadCaster = this; unnecessary?
         } catch (RemoteException | NotBoundException e){
@@ -151,6 +151,6 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
 
     @Override
     public String getName() {
-        return name;
+        return Announcer.name;
     }
 }
