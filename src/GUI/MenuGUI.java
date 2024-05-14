@@ -55,6 +55,7 @@ public class MenuGUI extends JMenuBar {
                 JFileChooser fileChooser = new JFileChooser();
                 if (fileChooser.showOpenDialog(board) == JFileChooser.APPROVE_OPTION) {
                     File openFile = fileChooser.getSelectedFile();
+                    curFile = openFile;
                     try {
                         return ImageIO.read(openFile);
                     } catch (IOException e) {

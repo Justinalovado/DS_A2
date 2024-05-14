@@ -41,6 +41,7 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
             this.manager = (ManagerInterface) registry.lookup("driver.Manager");
             String outcome = manager.requestJoin(this);
             gui.promptJoinOutcome(outcome);
+//            Announcer.broadCaster = this; unnecessary?
         } catch (RemoteException | NotBoundException e){
             gui.promptShutdownMessage("Cannot find Server");
         }
