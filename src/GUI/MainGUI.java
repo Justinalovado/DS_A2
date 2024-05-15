@@ -4,6 +4,7 @@ import driver.Client;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.CompletableFuture;
 
 public class MainGUI extends JFrame{
 
@@ -59,7 +60,8 @@ public class MainGUI extends JFrame{
                     JOptionPane.ERROR_MESSAGE,
                     null,
                     options,
-                    options[1]);
+                    options[1]
+            );
 
             if (choice == JOptionPane.YES_OPTION) {
                 System.exit(0); // Terminate the application
@@ -71,22 +73,17 @@ public class MainGUI extends JFrame{
     }
 
 
-    public void promptJoinOutcome(String outcome){
+    public void promptJoinOutcome(boolean success, String msg){
+        String title = success ? "Join Success" : "Join Failed";
         SwingUtilities.invokeLater(() -> {
-            if (outcome.equals("Welcome")){
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Join successful",
-                        outcome,
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-            } else {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Join fail",
-                        outcome,
-                        JOptionPane.INFORMATION_MESSAGE
-                );
+            JOptionPane.showMessageDialog(
+                    this,
+                    msg,
+                    title,
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            if (!success){
+                System.exit(0);
             }
         });
     }
@@ -102,5 +99,40 @@ public class MainGUI extends JFrame{
             System.exit(0);
         });
     }
-    // TODO: build file tool options
+
+    public JDialog promptWaiting(){
+        Object[] options = {"Abort", "Dismiss"};
+
+        JOptionPane optionPane = new JOptionPane(
+                "Waiting...",
+                JOptionPane.INFORMATION_MESSAGE,
+                JOptionPane.YES_NO_OPTION,
+                null,
+                options,
+                options[0]);
+
+        final JDialog dialog = optionPane.createDialog(this, "Waiting");
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        optionPane.addPropertyChangeListener(e -> {
+            String prop = e.getPropertyName();
+            if (dialog.isVisible() && (e.getSource() == optionPane)
+                    && (prop.equals(JOptionPane.VALUE_PROPERTY))) {
+                // Handle the selected option
+                int value = (Integer) optionPane.getValue();
+                if (value == JOptionPane.YES_OPTION) {
+                    System.exit(0);
+                } else if (value == JOptionPane.NO_OPTION) {
+                    dialog.dispose();
+                }
+            }
+        });
+
+        SwingUtilities.invokeLater(() -> {
+            dialog.pack();
+            dialog.setVisible(true);
+        });
+
+        return dialog;
+    }
 }

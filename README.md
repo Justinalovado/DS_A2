@@ -43,4 +43,7 @@
 - [ ] On all server -> Client operation fail: kick client, broadcast new user list
 - [ ] On all client -> server operation fail: prompt connection lost & quit
 - [ ] On server IO error, prompt msg & continue or quit
-- [ ] On 
+
+### Bugs
+- [ ] when client click OK in waiting window, draw is allowed and error is allowed, fix to abort on wait
+- [ ] when server rejects client, client does not automatically quit

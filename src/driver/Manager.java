@@ -9,6 +9,8 @@ import Interface.ManagerInterface;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -35,18 +37,27 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
     }
 
     @Override
-    public String requestJoin(ClientInterface client) throws RemoteException {
+    public String clientRequestJoin(ClientInterface client) throws RemoteException {
         String clientName = client.getName();
-        if (!clients.containsKey(clientName) || !clientName.equals(Announcer.name)){
-            clients.put(clientName, client);
-            gui.listPane.appendUser(clientName);
-            broadcastOverhaulBoard(gui.whiteBoard.getImg());
-            broadcastOverhaulChat(gui.chatPanel.textArea.getText());
-            return "Welcome";
-        } else {
+        if (clients.containsKey(clientName) || clientName.equals(Announcer.name)) {
             return "Duplicate Name, try another";
+        } else {
+            int response = JOptionPane.showConfirmDialog(gui,
+                    "Do you want to allow " + clientName + " to join?",
+                    "Confirm Join Request",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+
+            if (response == JOptionPane.YES_OPTION) {
+                clients.put(clientName, client);
+                gui.listPane.appendUser(clientName);
+                broadcastOverhaulBoard(gui.whiteBoard.getImg());
+                broadcastOverhaulChat(gui.chatPanel.textArea.getText());
+                return "Welcome";
+            } else {
+                return "Manager rejected your join request";
+            }
         }
-        // TODO: add manager confirmation on join
     }
 
 

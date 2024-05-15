@@ -18,7 +18,7 @@ public class JoinWhiteBoard {
             gui = new MainGUI(Announcer.name, false); //TODO: change to input name
             SwingUtilities.invokeLater(() -> gui.setVisible(true));
 
-            client = new Client(gui, Announcer.name);
+            client = new Client(gui);
             Announcer.broadCaster = client;
         } catch (RemoteException e) {
             throw new RuntimeException(e);
