@@ -6,12 +6,9 @@ import Interface.BroadCaster;
 import Interface.ClientInterface;
 import Interface.ManagerInterface;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -23,9 +20,9 @@ import java.util.concurrent.Executors;
 public class Client extends UnicastRemoteObject implements ClientInterface, BroadCaster {
 
     public static Client client;
-    private MainGUI gui;
+    private final MainGUI gui;
     private ManagerInterface manager;
-    private ExecutorService executor = Executors.newCachedThreadPool();
+    private final ExecutorService executor = Executors.newCachedThreadPool();
     public Client(MainGUI gui) throws RemoteException {
         super();
         this.gui = gui;
@@ -35,7 +32,7 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
 
     public void reconnect(){
         try{
-            Registry registry = LocateRegistry.getRegistry(Announcer.SESSION_IP, Announcer.SESSION_PORT);
+            Registry registry = LocateRegistry.getRegistry(Utility.SESSION_IP, Utility.SESSION_PORT);
             this.manager = (ManagerInterface) registry.lookup("driver.Manager");
             gui.unlockAll();
             requestJoin();
@@ -137,7 +134,7 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
 
     @Override
     public void updateOverhaulBoard(byte[] imgByte) throws RemoteException {
-        BufferedImage img = deserializeImage(imgByte);
+        BufferedImage img = Utility.deserializeImage(imgByte);
         if (img != null){
             gui.whiteBoard.overhaulBoard(img);
         }
@@ -153,15 +150,6 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
         gui.whiteBoard.setDrawLock(bool);
     }
 
-    // TODO: put to utility
-    private BufferedImage deserializeImage(byte[] imgByte){
-        try(ByteArrayInputStream in = new ByteArrayInputStream(imgByte)){
-            return ImageIO.read(in);
-        }catch (IOException e){
-            System.out.println("Error on deserializing imageBytes");
-            return null;
-        }
-    }
 
     public void disconnect() throws RemoteException {
         manager.clientQuit(this);
@@ -196,6 +184,6 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
 
     @Override
     public String getName() {
-        return Announcer.name;
+        return Utility.name;
     }
 }

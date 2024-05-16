@@ -1,6 +1,6 @@
 package GUI;
 
-import driver.Announcer;
+import driver.Utility;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,9 +21,8 @@ public class WhiteBoardGUI extends JPanel {
 
     private Shape previewShape = null;
     private Point start = null;
-    private Point end = null;
 
-    private boolean isManager;
+    private final boolean isManager;
     private boolean drawLock = false;
 
     public WhiteBoardGUI(boolean isManager){
@@ -87,14 +86,10 @@ public class WhiteBoardGUI extends JPanel {
         });
 
         JComboBox<DrawMode> drawModeMenu = new JComboBox<>(DrawMode.values());
-        drawModeMenu.addActionListener(e -> {
-            mode = (DrawMode) drawModeMenu.getSelectedItem();
-        });
+        drawModeMenu.addActionListener(e -> mode = (DrawMode) drawModeMenu.getSelectedItem());
 
         JSlider strokeWidthSelector = new JSlider(2,30,2);
-        strokeWidthSelector.addChangeListener(e -> {
-            strokeWidth = strokeWidthSelector.getValue();
-        });
+        strokeWidthSelector.addChangeListener(e -> strokeWidth = strokeWidthSelector.getValue());
 
 
         if (isManager) toolPanel.add(new MenuGUI(this));
@@ -138,7 +133,7 @@ public class WhiteBoardGUI extends JPanel {
     private void drawTxt(Point p, String txt){
         Graphics2D g2d = getBrush();
         g2d.drawString(txt, p.x, p.y);
-        Announcer.broadCaster.broadcastDrawTxt(p, color, txt);
+        Utility.broadCaster.broadcastDrawTxt(p, color, txt);
         g2d.dispose();
         repaint();
     }
@@ -194,7 +189,7 @@ public class WhiteBoardGUI extends JPanel {
                 g2d.draw(new Ellipse2D.Double(x, y, diameter, diameter));
             }
         }
-        Announcer.broadCaster.broadcastDrawShape(a, b, strokeWidth, color, mode);
+        Utility.broadCaster.broadcastDrawShape(a, b, strokeWidth, color, mode);
         g2d.dispose();
         repaint();
     }
@@ -243,14 +238,6 @@ public class WhiteBoardGUI extends JPanel {
     }
 
     private Graphics2D getBrush(Color color){
-        Graphics2D g2d = img.createGraphics();
-        g2d.setPaint(color);
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        return g2d;
-    }
-
-    private Graphics2D getBrush(float strokeWidth){
         Graphics2D g2d = img.createGraphics();
         g2d.setPaint(color);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

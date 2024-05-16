@@ -1,8 +1,6 @@
 package driver;
 
 import GUI.MainGUI;
-import Interface.BroadCaster;
-import Interface.ManagerInterface;
 
 import javax.swing.*;
 import java.rmi.AlreadyBoundException;
@@ -22,15 +20,15 @@ public class CreateWhiteBoard {
         readInput(args);
 
         // launching GUI
-        MainGUI gui = new MainGUI(Announcer.name, true);
+        MainGUI gui = new MainGUI(Utility.name, true);
         SwingUtilities.invokeLater(() -> gui.setVisible(true));
 
         try {
             // launch handler
             manager = new Manager(gui);
-            Registry registry = LocateRegistry.createRegistry(Announcer.SESSION_PORT);
+            Registry registry = LocateRegistry.createRegistry(Utility.SESSION_PORT);
             registry.bind("driver.Manager", manager);
-            Announcer.broadCaster = manager;
+            Utility.broadCaster = manager;
         } catch (RemoteException | AlreadyBoundException e) {
             System.out.println("Something wrong when putting up server, perhaps port already Bound");
             System.exit(0);
@@ -39,30 +37,27 @@ public class CreateWhiteBoard {
 
     private static void readInput(String[] args){
         try {
-            Announcer.name = args[2];
+            Utility.name = args[2];
         } catch (ArrayIndexOutOfBoundsException e){
             System.out.println("Manager name not provided, using default...");
-            Announcer.setDefaultName("Manager");
+            Utility.setDefaultName("Manager");
         }
 
         try {
-            Announcer.SESSION_PORT = Integer.parseInt(args[1]);
-            Announcer.SESSION_IP = args[0];
+            Utility.SESSION_PORT = Integer.parseInt(args[1]);
+            Utility.SESSION_IP = args[0];
 //            System.setProperty("java.rmi.server.hostname", Announcer.SESSION_IP);
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e){
             System.out.println("Invalid arguments, using default...");
-            Announcer.setDefaultSessionAddr();
+            Utility.setDefaultSessionAddr();
         }
     }
 
     private static void addShutdownCleaner(){
-        Runtime.getRuntime().addShutdownHook(new Thread(){
-            @Override
-            public void run() {
-                if (manager != null){
-                    manager.notifyShutdown();
-                }
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (manager != null){
+                manager.notifyShutdown();
             }
-        });
+        }));
     }
 }

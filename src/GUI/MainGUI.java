@@ -1,11 +1,10 @@
 package GUI;
 
-import driver.Announcer;
+import driver.Utility;
 import driver.Client;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.concurrent.CompletableFuture;
 
 public class MainGUI extends JFrame{
 
@@ -13,14 +12,12 @@ public class MainGUI extends JFrame{
     public ListGUI listPane;
 
     public WhiteBoardGUI whiteBoard;
-    public JSplitPane splitPane;
     public JDialog waitDialog;
 
     public boolean isManager;
 
     public MainGUI(String name, boolean isManager){
         super(name);
-//        System.out.println(isManager);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
         setResizable(false);
@@ -107,7 +104,7 @@ public class MainGUI extends JFrame{
                     JOptionPane.INFORMATION_MESSAGE
             );
             if (!success){
-                Announcer.name = null;
+                Utility.name = null;
                 System.exit(0);
             }
         });
@@ -137,24 +134,20 @@ public class MainGUI extends JFrame{
     }
 
     public void promptNewCanvas(){
-        SwingUtilities.invokeLater(() -> {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Manager opened a new Canvas",
-                    "Canvas change",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
-        });
+        SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
+                this,
+                "Manager opened a new Canvas",
+                "Canvas change",
+                JOptionPane.INFORMATION_MESSAGE
+        ));
     }
 
     public void promptCloseCanvas(){
-        SwingUtilities.invokeLater(() -> {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Manager closed the canvas",
-                    "Canvas change",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
-        });
+        SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
+                this,
+                "Manager closed the canvas",
+                "Canvas change",
+                JOptionPane.INFORMATION_MESSAGE
+        ));
     }
 }

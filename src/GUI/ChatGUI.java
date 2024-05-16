@@ -1,9 +1,6 @@
 package GUI;
 
-import Interface.BroadCaster;
-import driver.Announcer;
-import driver.CreateWhiteBoard;
-import driver.JoinWhiteBoard;
+import driver.Utility;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +9,7 @@ public class ChatGUI extends JPanel{
 
     public JTextArea textArea;
     public JTextField textField;
-    private boolean isManager;
+    private final boolean isManager;
     private boolean chatLock = true;
     public ChatGUI(String name, boolean isManager){
         this.isManager = isManager;
@@ -43,7 +40,7 @@ public class ChatGUI extends JPanel{
         if (isManager){
             textArea.append(username + ">" + msg + "\n");
         }
-        Announcer.broadCaster.broadcastChatAppend(username, msg);
+        Utility.broadCaster.broadcastChatAppend(username, msg);
     }
 
     /**

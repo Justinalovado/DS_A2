@@ -15,11 +15,11 @@ public class JoinWhiteBoard {
 
         try {
 
-            gui = new MainGUI(Announcer.name, false);
+            gui = new MainGUI(Utility.name, false);
             SwingUtilities.invokeLater(() -> gui.setVisible(true));
 
             client = new Client(gui);
-            Announcer.broadCaster = client;
+            Utility.broadCaster = client;
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -27,35 +27,32 @@ public class JoinWhiteBoard {
 
     private static void readInput(String[] args){
         try {
-            Announcer.name = args[2];
+            Utility.name = args[2];
         } catch (ArrayIndexOutOfBoundsException e){
             System.out.println("Client name not provided, using default...");
             int randomInt = java.util.concurrent.ThreadLocalRandom.current().nextInt(10000);
-            Announcer.setDefaultName("Client" + randomInt);
+            Utility.setDefaultName("Client" + randomInt);
         }
 
         try {
-            Announcer.SESSION_PORT = Integer.parseInt(args[1]);
-            Announcer.SESSION_IP = args[0];
-            System.setProperty("java.rmi.server.hostname", Announcer.SESSION_IP);
+            Utility.SESSION_PORT = Integer.parseInt(args[1]);
+            Utility.SESSION_IP = args[0];
+            System.setProperty("java.rmi.server.hostname", Utility.SESSION_IP);
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e){
             System.out.println("Invalid arguments, using default...");
-            Announcer.setDefaultSessionAddr();
+            Utility.setDefaultSessionAddr();
         }
     }
 
     private static void addShutdownCleaner(){
-        Runtime.getRuntime().addShutdownHook(new Thread(){
-            @Override
-            public void run() {
-                if (client != null){
-                    try {
-                        client.disconnect();
-                    } catch (RemoteException | NullPointerException e) {
-                        System.out.println("Error on disconnect");
-                    }
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (client != null){
+                try {
+                    client.disconnect();
+                } catch (RemoteException | NullPointerException e) {
+                    System.out.println("Error on disconnect");
                 }
             }
-        });
+        }));
     }
 }

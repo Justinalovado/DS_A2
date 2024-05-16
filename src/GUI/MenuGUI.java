@@ -1,6 +1,6 @@
 package GUI;
 
-import driver.Announcer;
+import driver.Utility;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class MenuGUI extends JMenuBar {
-    private WhiteBoardGUI board;
+    private final WhiteBoardGUI board;
     private File curFile = null;
     public MenuGUI(WhiteBoardGUI board){
         this.board = board;
@@ -46,11 +46,11 @@ public class MenuGUI extends JMenuBar {
         board.initCanvas();
         board.repaint();
         board.setDrawLock(false);
-        Announcer.broadCaster.broadcastNewCanvas();
-        Announcer.broadCaster.broadcastOverhaulBoard(board.getImg());
+        Utility.broadCaster.broadcastNewCanvas();
+        Utility.broadCaster.broadcastOverhaulBoard(board.getImg());
     }
     private void handleOpen(ActionEvent actionEvent) {
-        SwingWorker<BufferedImage, Void> worker = new SwingWorker<BufferedImage, Void>() {
+        SwingWorker<BufferedImage, Void> worker = new SwingWorker<>() {
             @Override
             protected BufferedImage doInBackground() throws Exception {
                 JFileChooser fileChooser = new JFileChooser();
@@ -75,8 +75,8 @@ public class MenuGUI extends JMenuBar {
                         board.setImg(loadedImg);  // Assuming 'board' has a method setImage(BufferedImage)
                         board.repaint();
                         board.setDrawLock(false);
-                        Announcer.broadCaster.broadcastNewCanvas();
-                        Announcer.broadCaster.broadcastOverhaulBoard(loadedImg);
+                        Utility.broadCaster.broadcastNewCanvas();
+                        Utility.broadCaster.broadcastOverhaulBoard(loadedImg);
                         JOptionPane.showMessageDialog(board, "Image Opened Successfully");
                     } else {
                         JOptionPane.showMessageDialog(board, "Open Failed");
@@ -91,15 +91,15 @@ public class MenuGUI extends JMenuBar {
 
     private void handleSave(ActionEvent actionEvent) {
         if (curFile != null){
-            SwingWorker<Boolean, Void> worker= new SwingWorker<Boolean, Void>(){
+            SwingWorker<Boolean, Void> worker= new SwingWorker<>() {
                 @Override
                 protected Boolean doInBackground() throws Exception {
                     BufferedImage img = board.getImg();
-                    try{
-                        if (!curFile.getName().toLowerCase().endsWith(".png")){
+                    try {
+                        if (!curFile.getName().toLowerCase().endsWith(".png")) {
                             curFile = new File(curFile.getParentFile(), curFile.getName() + ".png");
                         }
-                        return ImageIO.write(img,"PNG", curFile);
+                        return ImageIO.write(img, "PNG", curFile);
                     } catch (IOException e) {
                         System.out.println("Failed to save file");
                         return false;
@@ -108,9 +108,9 @@ public class MenuGUI extends JMenuBar {
 
                 @Override
                 protected void done() {
-                    try{
+                    try {
                         boolean status = get();
-                        if (status){
+                        if (status) {
                             JOptionPane.showMessageDialog(board, "Image Saved");
                         } else {
                             JOptionPane.showMessageDialog(board, "Save Failed");
@@ -127,21 +127,21 @@ public class MenuGUI extends JMenuBar {
     }
 
     private void handleSaveAs(ActionEvent actionEvent) {
-        SwingWorker<Boolean, Void> worker= new SwingWorker<Boolean, Void>(){
+        SwingWorker<Boolean, Void> worker= new SwingWorker<>() {
             @Override
             protected Boolean doInBackground() throws Exception {
                 JFileChooser fileChooser = new JFileChooser();
                 BufferedImage img = board.getImg();
-                if (fileChooser.showSaveDialog(board) == JFileChooser.APPROVE_OPTION){
+                if (fileChooser.showSaveDialog(board) == JFileChooser.APPROVE_OPTION) {
                     File saveFile = fileChooser.getSelectedFile();
-                    try{
-                        if (!saveFile.getName().toLowerCase().endsWith(".png")){
+                    try {
+                        if (!saveFile.getName().toLowerCase().endsWith(".png")) {
                             saveFile = new File(saveFile.getParentFile(), saveFile.getName() + ".png");
                         }
-                        if (curFile == null){
+                        if (curFile == null) {
                             curFile = saveFile;
                         }
-                        return ImageIO.write(img,"PNG", saveFile);
+                        return ImageIO.write(img, "PNG", saveFile);
                     } catch (IOException e) {
                         System.out.println("Failed to save file");
                         return false;
@@ -152,9 +152,9 @@ public class MenuGUI extends JMenuBar {
 
             @Override
             protected void done() {
-                try{
+                try {
                     boolean status = get();
-                    if (status){
+                    if (status) {
                         JOptionPane.showMessageDialog(board, "Image Saved");
                     } else {
                         JOptionPane.showMessageDialog(board, "Save Failed");
@@ -172,7 +172,7 @@ public class MenuGUI extends JMenuBar {
         board.initCanvas();
         board.repaint();
         board.setDrawLock(true);
-        Announcer.broadCaster.broadcastCLoseCanvas();
+        Utility.broadCaster.broadcastCLoseCanvas();
     }
 
 }

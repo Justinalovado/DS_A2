@@ -6,12 +6,9 @@ import Interface.BroadCaster;
 import Interface.ClientInterface;
 import Interface.ManagerInterface;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
@@ -22,11 +19,11 @@ import java.util.concurrent.Executors;
 
 public class Manager extends UnicastRemoteObject implements ManagerInterface, BroadCaster {
 //    private List<ClientInterface> clients = new ArrayList<>();
-    private Map<String, ClientInterface> clients = new ConcurrentHashMap<>(); // TODO: Make method sync
-    private MainGUI gui;
+    private final Map<String, ClientInterface> clients = new ConcurrentHashMap<>(); // TODO: Make method sync
+    private final MainGUI gui;
 
     public static Manager manager;
-    private ExecutorService executor = Executors.newCachedThreadPool();
+    private final ExecutorService executor = Executors.newCachedThreadPool();
 
     public Manager(MainGUI gui) throws RemoteException {
         super();
@@ -37,7 +34,7 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
     @Override
     public String clientRequestJoin(ClientInterface client) throws RemoteException {
         String clientName = client.getName();
-        if (clients.containsKey(clientName) || clientName.equals(Announcer.name)) {
+        if (clients.containsKey(clientName) || clientName.equals(Utility.name)) {
             return "Duplicate Name, try another";
         } else {
             int response = JOptionPane.showConfirmDialog(gui,
@@ -62,151 +59,121 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
 
     @Override
     public void broadcastChatAppend(String name, String msg) {
-        executor.submit(() -> {
-            clients.forEach((clientName, clientInterface) -> {
-                try {
-                    clientInterface.updateAppendChat(name, msg);
-                } catch (RemoteException e) {
-                    System.out.println("A remote error caught by server, removing client: " + clientName);
-                    kickClient(clientName);
-                }
-            });
-        });
+        executor.submit(() -> clients.forEach((clientName, clientInterface) -> {
+            try {
+                clientInterface.updateAppendChat(name, msg);
+            } catch (RemoteException e) {
+                System.out.println("A remote error caught by server, removing client: " + clientName);
+                kickClient(clientName);
+            }
+        }));
     }
 
     @Override
     public void broadcastUserList(DefaultListModel<String> lst) {
-        executor.submit(()->{
-            clients.forEach((clientName, clientInterface) -> {
-                try {
-                    clientInterface.updateUserList(lst);
-                } catch (RemoteException e) {
-                    // Handle exception, perhaps by removing the client
-                    System.out.println("A remote error caught by server, removing client: " + clientName);
-                    kickClient(clientName);
-                }
-            });
-        });
+        executor.submit(()-> clients.forEach((clientName, clientInterface) -> {
+            try {
+                clientInterface.updateUserList(lst);
+            } catch (RemoteException e) {
+                // Handle exception, perhaps by removing the client
+                System.out.println("A remote error caught by server, removing client: " + clientName);
+                kickClient(clientName);
+            }
+        }));
     }
 
     @Override
     public void broadcastDrawShape(Point a, Point b, float strokeWidth, Color color, DrawMode shape) {
-        executor.submit(() -> {
-            clients.forEach((clientName, clientInterface) -> {
-                try {
-                    clientInterface.updateDrawShape(a, b, strokeWidth, color, shape);
-                } catch (RemoteException e) {
-                    // Handle exception, perhaps by removing the client
-                    System.out.println("A remote error caught by server, removing client: " + clientName);
-                    kickClient(clientName);
-                }
-            });
-        });
+        executor.submit(() -> clients.forEach((clientName, clientInterface) -> {
+            try {
+                clientInterface.updateDrawShape(a, b, strokeWidth, color, shape);
+            } catch (RemoteException e) {
+                // Handle exception, perhaps by removing the client
+                System.out.println("A remote error caught by server, removing client: " + clientName);
+                kickClient(clientName);
+            }
+        }));
     }
 
     @Override
     public void broadcastDrawTxt(Point a, Color c, String txt) {
-        executor.submit(() -> {
-            clients.forEach((clientName, clientInterface) -> {
-                try {
-                    clientInterface.updateDrawTxt(a, c, txt);
-                } catch (RemoteException e) {
-                    // Handle exception, perhaps by removing the client
-                    System.out.println("A remote error caught by server, removing client: " + clientName);
-                    kickClient(clientName);
-                }
-            });
-        });
+        executor.submit(() -> clients.forEach((clientName, clientInterface) -> {
+            try {
+                clientInterface.updateDrawTxt(a, c, txt);
+            } catch (RemoteException e) {
+                // Handle exception, perhaps by removing the client
+                System.out.println("A remote error caught by server, removing client: " + clientName);
+                kickClient(clientName);
+            }
+        }));
     }
 
     @Override
     public void broadcastOverhaulBoard(BufferedImage img) {
-        executor.submit(() -> {
-            clients.forEach((clientName, clientInterface) -> {
-                try {
-                    byte[] imgByte = serializeImage(img);
-                    if (img != null) {
-                        clientInterface.updateOverhaulBoard(imgByte);
-                    }
-                } catch (RemoteException e) {
-                    // Handle exception, perhaps by removing the client
-                    System.out.println("A remote error caught by server, removing client: " + clientName);
-                    kickClient(clientName);
+        executor.submit(() -> clients.forEach((clientName, clientInterface) -> {
+            try {
+                byte[] imgByte = Utility.serializeImage(img);
+                if (img != null) {
+                    clientInterface.updateOverhaulBoard(imgByte);
                 }
-            });
-        });
+            } catch (RemoteException e) {
+                // Handle exception, perhaps by removing the client
+                System.out.println("A remote error caught by server, removing client: " + clientName);
+                kickClient(clientName);
+            }
+        }));
     }
 
     @Override
     public void broadcastOverhaulChat(String chat) {
-        executor.submit(() -> {
-            clients.forEach((clientName, clientInterface) -> {
-                try {
-                    clientInterface.updateOverhaulChat(chat);
-                } catch (RemoteException e) {
-                    // Handle exception, perhaps by removing the client
-                    System.out.println("A remote error caught by server, removing client: " + clientName);
-                    kickClient(clientName);
-                }
-            });
-        });
+        executor.submit(() -> clients.forEach((clientName, clientInterface) -> {
+            try {
+                clientInterface.updateOverhaulChat(chat);
+            } catch (RemoteException e) {
+                // Handle exception, perhaps by removing the client
+                System.out.println("A remote error caught by server, removing client: " + clientName);
+                kickClient(clientName);
+            }
+        }));
     }
 
     @Override
     public void broadcastNewCanvas() {
-        executor.submit(() -> {
-            clients.forEach((clientName, clientInterface) -> {
-                try {
-                    clientInterface.notifyNewCanvas();
-                } catch (RemoteException e) {
-                    // Handle exception, perhaps by removing the client
-                    System.out.println("A remote error caught by server, removing client: " + clientName);
-                    kickClient(clientName);
-                }
-            });
-        });
+        executor.submit(() -> clients.forEach((clientName, clientInterface) -> {
+            try {
+                clientInterface.notifyNewCanvas();
+            } catch (RemoteException e) {
+                // Handle exception, perhaps by removing the client
+                System.out.println("A remote error caught by server, removing client: " + clientName);
+                kickClient(clientName);
+            }
+        }));
     }
 
     @Override
     public void broadcastCLoseCanvas() {
-        executor.submit(() -> {
-            clients.forEach((clientName, clientInterface) -> {
-                try {
-                    clientInterface.notifyCloseCanvas();
-                } catch (RemoteException e) {
-                    // Handle exception, perhaps by removing the client
-                    System.out.println("A remote error caught by server, removing client: " + clientName);
-                    kickClient(clientName);
-                }
-            });
-        });
+        executor.submit(() -> clients.forEach((clientName, clientInterface) -> {
+            try {
+                clientInterface.notifyCloseCanvas();
+            } catch (RemoteException e) {
+                // Handle exception, perhaps by removing the client
+                System.out.println("A remote error caught by server, removing client: " + clientName);
+                kickClient(clientName);
+            }
+        }));
     }
 
     @Override
     public void broadcastSetLock(boolean bool) {
-        executor.submit(() -> {
-            clients.forEach((clientName, clientInterface) -> {
-                try {
-                    clientInterface.updateCanvasLock(bool);
-                } catch (RemoteException e) {
-                    // Handle exception, perhaps by removing the client
-                    System.out.println("A remote error caught by server, removing client: " + clientName);
-                    kickClient(clientName);
-                }
-            });
-        });
-    }
-
-    // TODO: put to utility
-    private byte[] serializeImage(BufferedImage img){
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()){
-            ImageIO.write(img, "png", baos);
-            baos.flush();
-            return baos.toByteArray();
-        } catch (IOException e) {
-            System.out.println("Error on serializing bufferedImage");
-            return null;
-        }
+        executor.submit(() -> clients.forEach((clientName, clientInterface) -> {
+            try {
+                clientInterface.updateCanvasLock(bool);
+            } catch (RemoteException e) {
+                // Handle exception, perhaps by removing the client
+                System.out.println("A remote error caught by server, removing client: " + clientName);
+                kickClient(clientName);
+            }
+        }));
     }
 
     /**
