@@ -4,7 +4,6 @@ import driver.Announcer;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -46,6 +45,8 @@ public class MenuGUI extends JMenuBar {
         this.curFile = null;
         board.initCanvas();
         board.repaint();
+        board.setDrawLock(false);
+        Announcer.broadCaster.broadcastNewCanvas();
         Announcer.broadCaster.broadcastOverhaulBoard(board.getImg());
     }
     private void handleOpen(ActionEvent actionEvent) {
@@ -73,6 +74,8 @@ public class MenuGUI extends JMenuBar {
                     if (loadedImg != null) {
                         board.setImg(loadedImg);  // Assuming 'board' has a method setImage(BufferedImage)
                         board.repaint();
+                        board.setDrawLock(false);
+                        Announcer.broadCaster.broadcastNewCanvas();
                         Announcer.broadCaster.broadcastOverhaulBoard(loadedImg);
                         JOptionPane.showMessageDialog(board, "Image Opened Successfully");
                     } else {
@@ -165,6 +168,11 @@ public class MenuGUI extends JMenuBar {
     }
 
     private void handleClose(ActionEvent actionEvent) {
+        this.curFile = null;
+        board.initCanvas();
+        board.repaint();
+        board.setDrawLock(true);
+        Announcer.broadCaster.broadcastCLoseCanvas();
     }
 
 }

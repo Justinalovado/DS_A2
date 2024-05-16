@@ -105,6 +105,21 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
     }
 
     @Override
+    public void broadcastNewCanvas() {
+        // pass
+    }
+
+    @Override
+    public void broadcastCLoseCanvas() {
+        // pass
+    }
+
+    @Override
+    public void broadcastSetLock(boolean bool) {
+        // pass
+    }
+
+    @Override
     public void updateUserList(DefaultListModel<String> lst) throws RemoteException {
         gui.listPane.updateUserList(lst);
     }
@@ -132,6 +147,11 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
         gui.chatPanel.textArea.setText(chat);
     }
 
+    @Override
+    public void updateCanvasLock(boolean bool) throws RemoteException {
+        gui.whiteBoard.setDrawLock(bool);
+    }
+
     // TODO: put to utility
     private BufferedImage deserializeImage(byte[] imgByte){
         try(ByteArrayInputStream in = new ByteArrayInputStream(imgByte)){
@@ -147,13 +167,27 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
     }
 
     @Override
-    public void kickedByManager() throws RemoteException {
+    public void notifyKickedByManager() throws RemoteException {
         gui.promptKick();
     }
 
     @Override
-    public void managerShutdown() throws RemoteException {
+    public void notifyManagerShutdown() throws RemoteException {
         gui.promptShutdownMessage("Server is down, retry later");
+    }
+
+    @Override
+    public void notifyNewCanvas() throws RemoteException {
+        gui.promptNewCanvas();
+        gui.whiteBoard.setDrawLock(false);
+    }
+
+    @Override
+    public void notifyCloseCanvas() throws RemoteException {
+        gui.whiteBoard.initCanvas();
+        gui.whiteBoard.repaint();
+        gui.promptCloseCanvas();
+        gui.whiteBoard.setDrawLock(true);
     }
 
     @Override

@@ -13,5 +13,7 @@ public interface BroadCaster {
     void broadcastDrawTxt(Point a, Color c, String txt);
     void broadcastOverhaulBoard(BufferedImage img);
     void broadcastOverhaulChat(String chat);
-    // TODO: build board & chat update cycle (only from server)
+    void broadcastNewCanvas();
+    void broadcastCLoseCanvas();
+    void broadcastSetLock(boolean bool);
 }

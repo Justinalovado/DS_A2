@@ -61,7 +61,6 @@ public class MainGUI extends JFrame{
             closeButton.addActionListener(e -> System.exit(0));
             dialog.setLocationRelativeTo(this);
             dialog.add(closeButton);
-            dialog.setAlwaysOnTop(true);
             this.waitDialog = dialog;
         });
     }
@@ -128,5 +127,27 @@ public class MainGUI extends JFrame{
 
     public void unpromptWaiting(){
         SwingUtilities.invokeLater(() -> waitDialog.setVisible(false));
+    }
+
+    public void promptNewCanvas(){
+        SwingUtilities.invokeLater(() -> {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Manager opened a new Canvas",
+                    "Canvas change",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        });
+    }
+
+    public void promptCloseCanvas(){
+        SwingUtilities.invokeLater(() -> {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Manager closed the canvas",
+                    "Canvas change",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        });
     }
 }

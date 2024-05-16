@@ -24,8 +24,7 @@ public class WhiteBoardGUI extends JPanel {
     private Point end = null;
 
     private boolean isManager;
-
-
+    private boolean drawLock = false;
 
     public WhiteBoardGUI(boolean isManager){
         this.isManager = isManager;
@@ -58,6 +57,7 @@ public class WhiteBoardGUI extends JPanel {
             }
         });
     }
+
     private void initStates() {
         // init states
         this.color = Color.black;
@@ -65,6 +65,7 @@ public class WhiteBoardGUI extends JPanel {
         this.stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         this.mode = DrawMode.FREE_DRAW;
     }
+
     public void initCanvas() {
         // initialize canvas
         this.img = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
@@ -72,6 +73,7 @@ public class WhiteBoardGUI extends JPanel {
         g2d.fillRect(0, 0, 800, 600);
         g2d.dispose();
     }
+
     private void initToolPanel() {
         JPanel toolPanel = new JPanel();
         toolPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -103,26 +105,8 @@ public class WhiteBoardGUI extends JPanel {
         add(toolPanel, BorderLayout.NORTH);
     }
 
-//    private JMenuBar makeFileMenu() {
-//        JMenuBar menuBar = new JMenuBar();
-//        JMenu fileMenu = new JMenu("File");
-//
-//        JMenuItem New = new JMenuItem("New");
-//        fileMenu.add(New);
-//        JMenuItem Open = new JMenuItem("Open");
-//        fileMenu.add(Open);
-//        JMenuItem Save = new JMenuItem("Save");
-//        fileMenu.add(Save);
-//        JMenuItem SaveAs = new JMenuItem("SaveAs");
-//        fileMenu.add(SaveAs);
-//        JMenuItem Close = new JMenuItem("Close");
-//        fileMenu.add(Close);
-//
-//        menuBar.add(fileMenu);
-//        return menuBar;
-//    }
-
     private void onMouseDrag(MouseEvent e){
+        if (drawLock) return;
         if (mode == DrawMode.FREE_DRAW || mode == DrawMode.ERASE){
             quickDrawShape(start, e.getPoint());
             start = e.getPoint();
@@ -135,6 +119,7 @@ public class WhiteBoardGUI extends JPanel {
     }
 
     private void onMouseRelease(MouseEvent e){
+        if (drawLock) return;
         if (mode == DrawMode.FREE_DRAW || mode == DrawMode.ERASE){
             quickDrawShape(start, e.getPoint());
         } else if (mode == DrawMode.TEXT) {
@@ -299,5 +284,13 @@ public class WhiteBoardGUI extends JPanel {
 
     public void setImg(BufferedImage img) {
         this.img = img;
+    }
+
+    public void setDrawLock(boolean bool){
+        drawLock = bool;
+    }
+
+    public boolean getDrawLock(){
+        return drawLock;
     }
 }

@@ -9,8 +9,6 @@ import Interface.ManagerInterface;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -53,6 +51,7 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
                 gui.listPane.appendUser(clientName);
                 broadcastOverhaulBoard(gui.whiteBoard.getImg());
                 broadcastOverhaulChat(gui.chatPanel.textArea.getText());
+                broadcastSetLock(gui.whiteBoard.getDrawLock());
                 return "Welcome";
             } else {
                 return "Manager rejected your join request";
@@ -153,6 +152,51 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         });
     }
 
+    @Override
+    public void broadcastNewCanvas() {
+        executor.submit(() -> {
+            clients.forEach((clientName, clientInterface) -> {
+                try {
+                    clientInterface.notifyNewCanvas();
+                } catch (RemoteException e) {
+                    // Handle exception, perhaps by removing the client
+                    System.out.println("A remote error caught by server, removing client: " + clientName);
+                    kickClient(clientName);
+                }
+            });
+        });
+    }
+
+    @Override
+    public void broadcastCLoseCanvas() {
+        executor.submit(() -> {
+            clients.forEach((clientName, clientInterface) -> {
+                try {
+                    clientInterface.notifyCloseCanvas();
+                } catch (RemoteException e) {
+                    // Handle exception, perhaps by removing the client
+                    System.out.println("A remote error caught by server, removing client: " + clientName);
+                    kickClient(clientName);
+                }
+            });
+        });
+    }
+
+    @Override
+    public void broadcastSetLock(boolean bool) {
+        executor.submit(() -> {
+            clients.forEach((clientName, clientInterface) -> {
+                try {
+                    clientInterface.updateCanvasLock(bool);
+                } catch (RemoteException e) {
+                    // Handle exception, perhaps by removing the client
+                    System.out.println("A remote error caught by server, removing client: " + clientName);
+                    kickClient(clientName);
+                }
+            });
+        });
+    }
+
     // TODO: put to utility
     private byte[] serializeImage(BufferedImage img){
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()){
@@ -199,7 +243,7 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
             ClientInterface client = clients.get(name);
             if (client != null){
                 try{
-                    client.kickedByManager();
+                    client.notifyKickedByManager();
                 } catch (RemoteException e){
                     System.out.println("Tried to inform kicked user but failed");
                 }
@@ -211,7 +255,7 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
     public void notifyShutdown(){
         clients.forEach((clientName, clientInterface) -> {
             try {
-                clientInterface.managerShutdown();
+                clientInterface.notifyManagerShutdown();
             } catch (RemoteException e) {
                 // Handle exception, perhaps by removing the client
                 System.out.println("A remote error caught by server, removing client: " + clientName);
