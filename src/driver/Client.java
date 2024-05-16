@@ -17,7 +17,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -162,7 +161,6 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
 
     @Override
     public String getName() {
-//        System.out.println("an attempt to get name: " + Announcer.name);
         return Announcer.name;
     }
 }

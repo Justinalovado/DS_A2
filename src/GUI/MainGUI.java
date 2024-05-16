@@ -1,5 +1,6 @@
 package GUI;
 
+import driver.Announcer;
 import driver.Client;
 
 import javax.swing.*;
@@ -59,7 +60,6 @@ public class MainGUI extends JFrame{
             JButton closeButton = new JButton("Abort & Close");
             closeButton.addActionListener(e -> System.exit(0));
             dialog.setLocationRelativeTo(this);
-//            dialog.setLocation(100,50);
             dialog.add(closeButton);
             dialog.setAlwaysOnTop(true);
             this.waitDialog = dialog;
@@ -101,6 +101,7 @@ public class MainGUI extends JFrame{
                     JOptionPane.INFORMATION_MESSAGE
             );
             if (!success){
+                Announcer.name = null;
                 System.exit(0);
             }
         });
@@ -121,7 +122,6 @@ public class MainGUI extends JFrame{
     public void promptWaiting(){
         SwingUtilities.invokeLater(() -> {
             waitDialog.setLocationRelativeTo(this);
-//            waitDialog.setLocation(100,50);
             waitDialog.setVisible(true);
         });
     }

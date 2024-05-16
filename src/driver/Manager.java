@@ -176,6 +176,7 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
     @Override
     public void clientQuit(ClientInterface client) throws RemoteException {
         String name = client.getName();
+        if (name == null) return;
         gui.listPane.removeUser(name);
         clients.remove(name);
     }
