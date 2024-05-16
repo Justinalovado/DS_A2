@@ -37,6 +37,7 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
         try{
             Registry registry = LocateRegistry.getRegistry(Announcer.SESSION_IP, Announcer.SESSION_PORT);
             this.manager = (ManagerInterface) registry.lookup("driver.Manager");
+            gui.unlockAll();
             requestJoin();
         } catch (RemoteException | NotBoundException e){
             gui.promptShutdownMessage("Cannot find Server");

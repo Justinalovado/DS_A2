@@ -15,7 +15,7 @@ public class JoinWhiteBoard {
 
         try {
 
-            gui = new MainGUI(Announcer.name, false); //TODO: change to input name
+            gui = new MainGUI(Announcer.name, false);
             SwingUtilities.invokeLater(() -> gui.setVisible(true));
 
             client = new Client(gui);
@@ -38,8 +38,8 @@ public class JoinWhiteBoard {
             Announcer.SESSION_PORT = Integer.parseInt(args[1]);
             Announcer.SESSION_IP = args[0];
             System.setProperty("java.rmi.server.hostname", Announcer.SESSION_IP);
-        } catch (ArrayIndexOutOfBoundsException e){
-            System.out.println("Not enough argument, using default...");
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e){
+            System.out.println("Invalid arguments, using default...");
             Announcer.setDefaultSessionAddr();
         }
     }

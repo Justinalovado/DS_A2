@@ -13,6 +13,7 @@ public class ChatGUI extends JPanel{
     public JTextArea textArea;
     public JTextField textField;
     private boolean isManager;
+    private boolean chatLock = true;
     public ChatGUI(String name, boolean isManager){
         this.isManager = isManager;
         setLayout(new BorderLayout());
@@ -26,7 +27,7 @@ public class ChatGUI extends JPanel{
         textField = new JTextField();
         textField.addActionListener(e -> {
             String text = textField.getText();
-            if (!text.isEmpty()) {
+            if (!text.isEmpty() && !chatLock) {
                 appendChat(name, text);
                 textField.setText("");
             }
@@ -52,4 +53,7 @@ public class ChatGUI extends JPanel{
         textArea.append(username + ">" + msg + "\n");
     }
 
+    public void setChatLock(boolean bool){
+        this.chatLock = bool;
+    }
 }

@@ -31,11 +31,8 @@ public class CreateWhiteBoard {
             Registry registry = LocateRegistry.createRegistry(Announcer.SESSION_PORT);
             registry.bind("driver.Manager", manager);
             Announcer.broadCaster = manager;
-        } catch (RemoteException e) {
-            System.out.println("Something wrong when putting up server, perhaps IP invalid");
-            System.exit(0);
-        } catch (AlreadyBoundException e) {
-            System.out.println("Port already bound, use another port");
+        } catch (RemoteException | AlreadyBoundException e) {
+            System.out.println("Something wrong when putting up server, perhaps port already Bound");
             System.exit(0);
         }
     }
@@ -51,9 +48,9 @@ public class CreateWhiteBoard {
         try {
             Announcer.SESSION_PORT = Integer.parseInt(args[1]);
             Announcer.SESSION_IP = args[0];
-            System.setProperty("java.rmi.server.hostname", Announcer.SESSION_IP);
-        } catch (ArrayIndexOutOfBoundsException e){
-            System.out.println("Not enough argument, using default...");
+//            System.setProperty("java.rmi.server.hostname", Announcer.SESSION_IP);
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e){
+            System.out.println("Invalid arguments, using default...");
             Announcer.setDefaultSessionAddr();
         }
     }

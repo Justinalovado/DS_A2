@@ -20,7 +20,7 @@ public class MainGUI extends JFrame{
 
     public MainGUI(String name, boolean isManager){
         super(name);
-        System.out.println(isManager);
+//        System.out.println(isManager);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
         setResizable(false);
@@ -49,6 +49,8 @@ public class MainGUI extends JFrame{
         splitPane.setRightComponent(rightPanel);
         createWaitPane();
         this.isManager = isManager;
+        this.whiteBoard.setDrawLock(!isManager);
+        this.chatPanel.setChatLock(!isManager);
     }
 
     private void createWaitPane(){
@@ -63,6 +65,11 @@ public class MainGUI extends JFrame{
             dialog.add(closeButton);
             this.waitDialog = dialog;
         });
+    }
+
+    public void unlockAll(){
+        this.chatPanel.setChatLock(false);
+        this.chatPanel.setChatLock(false);
     }
 
     public void promptKick(){

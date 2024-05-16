@@ -3,12 +3,12 @@
 ### NOTE:
 1. [x] create overhaulUpdate methods for board
 2. [x] create overhaulUpdate method for chat
-3. [ ] add file manipulation tool option
+3. [x] add file manipulation tool option
    - [x] New: white all, file pointer to nothing, enable all operation
    - [x] Save: If file pointer==null, to save as, else create new thread to read buffered img
    - [x] Save ass: prompt file chooser, if fp==null, set fp to new fp, else fp not change, create new file
-   - [ ] close: keep client, but prompt them canvas close, disable all operation
-4. [ ] add notif to client on file update
+   - [x] close: keep client, but prompt them canvas close, disable all operation
+4. [x] add notif to client on file update
 5. [x] build runnable jar with 2 main
 6. [x] switch user name to CLI args
 7. [x] Create Join approved & reject
@@ -20,7 +20,7 @@
 13. [x] window & canvas size adjustment, make display = canvas size
 
 ### Implementation checklist:
-- [ ] Create a close opeartion
+- [x] Create a close opeartion
   1. clear current canvas (paint grey?)
   2. prompt clients of a server closure
   3. block all client using option pane(or simply not draw anything on board to avail the chat)
@@ -38,12 +38,15 @@
 - [ ] Ensure concurrent operation on client list
 
 ### Misc Error handling 
-- [ ] On server quit, all client should prompt quit
-- [ ] On Client quit, server should remove user
-- [ ] On all server -> Client operation fail: kick client, broadcast new user list
+- [x] On server quit, all client should prompt quit
+- [x] On Client quit, server should remove user
+- [x] On all server -> Client operation fail: kick client, broadcast new user list
 - [ ] On all client -> server operation fail: prompt connection lost & quit
 - [ ] On server IO error, prompt msg & continue or quit
 
 ### Bugs
-- [ ] when client click OK in waiting window, draw is allowed and error is allowed, fix to abort on wait
-- [ ] when server rejects client, client does not automatically quit
+- [x] when client click OK in waiting window, draw is allowed and error is allowed, fix to abort on wait
+- [x] when server rejects client, client does not automatically quit
+- [x] on wrong IP address, server can run(somehow) BUT OK
+- [x] on wrong IP address, client can run, but error on finding broadcaster
+- 
