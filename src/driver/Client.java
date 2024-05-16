@@ -18,12 +18,15 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Client extends UnicastRemoteObject implements ClientInterface, BroadCaster {
 
     public static Client client;
     private MainGUI gui;
     private ManagerInterface manager;
+    private ExecutorService executor = Executors.newCachedThreadPool();
     public Client(MainGUI gui) throws RemoteException {
         super();
         this.gui = gui;
@@ -42,10 +45,17 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
     }
 
     private void requestJoin() throws RemoteException {
-        JDialog waitPane = gui.promptWaiting();
-        String outcome = manager.clientRequestJoin(this); // wrap in method to add prompt before request
-        waitPane.dispose();
-        gui.promptJoinOutcome(outcome.equals("Welcome"), outcome);
+        gui.promptWaiting();
+        executor.submit(() -> {
+            String outcome = null;
+            try {
+                outcome = manager.clientRequestJoin(this);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+            gui.unpromptWaiting();
+            gui.promptJoinOutcome(outcome.equals("Welcome"), outcome);
+        });
     }
 
 
@@ -152,7 +162,7 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Broa
 
     @Override
     public String getName() {
-        System.out.println("an attempt to get name: " + Announcer.name);
+//        System.out.println("an attempt to get name: " + Announcer.name);
         return Announcer.name;
     }
 }

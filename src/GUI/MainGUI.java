@@ -13,6 +13,7 @@ public class MainGUI extends JFrame{
 
     public WhiteBoardGUI whiteBoard;
     public JSplitPane splitPane;
+    public JDialog waitDialog;
 
     public boolean isManager;
 
@@ -45,7 +46,24 @@ public class MainGUI extends JFrame{
         rightPanel.add(chatPanel);
 
         splitPane.setRightComponent(rightPanel);
+        createWaitPane();
         this.isManager = isManager;
+    }
+
+    private void createWaitPane(){
+        SwingUtilities.invokeLater(() -> {
+            JDialog dialog = new JDialog(this, "Waiting for Manager approval", true);
+            dialog.setSize(200, 100);
+            dialog.setLayout(new FlowLayout());
+
+            JButton closeButton = new JButton("Abort & Close");
+            closeButton.addActionListener(e -> System.exit(0));
+            dialog.setLocationRelativeTo(this);
+//            dialog.setLocation(100,50);
+            dialog.add(closeButton);
+            dialog.setAlwaysOnTop(true);
+            this.waitDialog = dialog;
+        });
     }
 
     public void promptKick(){
@@ -100,39 +118,15 @@ public class MainGUI extends JFrame{
         });
     }
 
-    public JDialog promptWaiting(){
-        Object[] options = {"Abort", "Dismiss"};
-
-        JOptionPane optionPane = new JOptionPane(
-                "Waiting...",
-                JOptionPane.INFORMATION_MESSAGE,
-                JOptionPane.YES_NO_OPTION,
-                null,
-                options,
-                options[0]);
-
-        final JDialog dialog = optionPane.createDialog(this, "Waiting");
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
-        optionPane.addPropertyChangeListener(e -> {
-            String prop = e.getPropertyName();
-            if (dialog.isVisible() && (e.getSource() == optionPane)
-                    && (prop.equals(JOptionPane.VALUE_PROPERTY))) {
-                // Handle the selected option
-                int value = (Integer) optionPane.getValue();
-                if (value == JOptionPane.YES_OPTION) {
-                    System.exit(0);
-                } else if (value == JOptionPane.NO_OPTION) {
-                    dialog.dispose();
-                }
-            }
-        });
-
+    public void promptWaiting(){
         SwingUtilities.invokeLater(() -> {
-            dialog.pack();
-            dialog.setVisible(true);
+            waitDialog.setLocationRelativeTo(this);
+//            waitDialog.setLocation(100,50);
+            waitDialog.setVisible(true);
         });
+    }
 
-        return dialog;
+    public void unpromptWaiting(){
+        SwingUtilities.invokeLater(() -> waitDialog.setVisible(false));
     }
 }
