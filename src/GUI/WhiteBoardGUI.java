@@ -57,6 +57,9 @@ public class WhiteBoardGUI extends JPanel {
         });
     }
 
+    /**
+     * initialise default parameters
+     */
     private void initStates() {
         // init states
         this.color = Color.black;
@@ -65,6 +68,9 @@ public class WhiteBoardGUI extends JPanel {
         this.mode = DrawMode.FREE_DRAW;
     }
 
+    /**
+     * bleach the canvas
+     */
     public void initCanvas() {
         // initialize canvas
         this.img = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
@@ -73,6 +79,9 @@ public class WhiteBoardGUI extends JPanel {
         g2d.dispose();
     }
 
+    /**
+     * set tool panel to default
+     */
     private void initToolPanel() {
         JPanel toolPanel = new JPanel();
         toolPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -100,6 +109,10 @@ public class WhiteBoardGUI extends JPanel {
         add(toolPanel, BorderLayout.NORTH);
     }
 
+    /**
+     * handler for mouse drag event
+     * @param e
+     */
     private void onMouseDrag(MouseEvent e){
         if (drawLock) return;
         if (mode == DrawMode.FREE_DRAW || mode == DrawMode.ERASE){
@@ -113,6 +126,10 @@ public class WhiteBoardGUI extends JPanel {
         }
     }
 
+    /**
+     * handler for mouse release event
+     * @param e
+     */
     private void onMouseRelease(MouseEvent e){
         if (drawLock) return;
         if (mode == DrawMode.FREE_DRAW || mode == DrawMode.ERASE){
@@ -130,6 +147,11 @@ public class WhiteBoardGUI extends JPanel {
     // inits /////////////////////////////////////////////////////////////////////////////////
     // ops /////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * draw txt on board & broadcast change to others
+     * @param p
+     * @param txt
+     */
     private void drawTxt(Point p, String txt){
         Graphics2D g2d = getBrush();
         g2d.drawString(txt, p.x, p.y);
@@ -138,6 +160,12 @@ public class WhiteBoardGUI extends JPanel {
         repaint();
     }
 
+    /**
+     * update of remote change on canvas
+     * @param p
+     * @param c
+     * @param txt
+     */
     public void updateDrawTxt(Point p, Color c, String txt){
         Graphics2D g2d = getBrush(c);
         g2d.drawString(txt, p.x, p.y);
@@ -145,6 +173,11 @@ public class WhiteBoardGUI extends JPanel {
         repaint();
     }
 
+    /**
+     * update the preview shape for rendering a preview shape
+     * @param a
+     * @param b
+     */
     private void updatePreviewShape(Point a, Point b) {
         this.stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         if (mode == DrawMode.LINE){
@@ -222,6 +255,10 @@ public class WhiteBoardGUI extends JPanel {
         });
     }
 
+    /**
+     * replace the board with the new img
+     * @param img
+     */
     public void overhaulBoard(BufferedImage img){
         this.img = img;
         repaint();
@@ -229,6 +266,23 @@ public class WhiteBoardGUI extends JPanel {
 
     // ops /////////////////////////////////////////////////////////////////////////////////
     // util ////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * override rendering method to display preview shape & not drawing it onto canvas
+     * @param g the <code>Graphics</code> object to protect
+     */
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.drawImage(img, 0, 0, null);
+        if (previewShape != null){
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setPaint(color);
+            g2.setStroke(stroke);
+            g2.draw(previewShape);
+        }
+    }
+
+    // getter & setters ////////////////////////////////////////////////////////////////////////
     private Graphics2D getBrush(){
         Graphics2D g2d = img.createGraphics();
         g2d.setPaint(color);
@@ -251,18 +305,6 @@ public class WhiteBoardGUI extends JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         return g2d;
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.drawImage(img, 0, 0, null);
-        if (previewShape != null){
-            Graphics2D g2 = (Graphics2D) g;
-            g2.setPaint(color);
-            g2.setStroke(stroke);
-            g2.draw(previewShape);
-        }
     }
 
     public BufferedImage getImg() {

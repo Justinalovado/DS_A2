@@ -25,6 +25,10 @@ public class JoinWhiteBoard {
         }
     }
 
+    /**
+     * takes input, does to perform validation but fills Username/ip:port when missing
+     * @param args
+     */
     private static void readInput(String[] args){
         try {
             Utility.name = args[2];
@@ -44,6 +48,9 @@ public class JoinWhiteBoard {
         }
     }
 
+    /**
+     * Graceful shutdown safety
+     */
     private static void addShutdownCleaner(){
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (client != null){

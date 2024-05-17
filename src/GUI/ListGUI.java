@@ -30,24 +30,31 @@ public class ListGUI extends JPanel{
         this.isManager = isManager;
     }
 
+    /**
+     * call manager to kick a client
+     * @param event
+     */
     public void kickUser(ActionEvent event){
-        String selected = userList.getSelectedValue(); // Get selected item
+        String selected = userList.getSelectedValue();
         if (selected != null && isManager && !selected.equals(Utility.name)){
             listModel.removeElement(selected);
-            Manager.manager.kickClient(selected); // remove from existence & notify
-            Manager.manager.broadcastUserList(listModel); // update all current user
+            Manager.manager.kickClient(selected);
+            Manager.manager.broadcastUserList(listModel);
         }
     }
 
 
     /**
-     * on client side to refresh display
+     * for Client, to refresh userlist updated from server
      */
     public void updateUserList(DefaultListModel<String> lst){
         listModel = lst;
         updateUserList();
     }
 
+    /**
+     * refresh display, sync with manager's client list
+     */
     public void updateUserList(){
         userList.setModel(listModel);
         if (isManager) {
@@ -55,10 +62,19 @@ public class ListGUI extends JPanel{
         }
     }
 
+    /**
+     * add user to display
+     * @param username
+     */
     public void appendUser(String username){
         listModel.addElement(username);
         updateUserList();
     }
+
+    /**
+     * remove user from display
+     * @param username
+     */
     public void removeUser(String username){
         listModel.removeElement(username);
         updateUserList();

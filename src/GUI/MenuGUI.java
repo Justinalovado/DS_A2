@@ -40,7 +40,10 @@ public class MenuGUI extends JMenuBar {
         add(fileMenu);
     }
 
-
+    /**
+     * paint canvas white and notify all client
+     * @param actionEvent
+     */
     private void handleNew(ActionEvent actionEvent) {
         this.curFile = null;
         board.initCanvas();
@@ -49,6 +52,11 @@ public class MenuGUI extends JMenuBar {
         Utility.broadCaster.broadcastNewCanvas();
         Utility.broadCaster.broadcastOverhaulBoard(board.getImg());
     }
+
+    /**
+     * summon a file window to open another file on another thread
+     * @param actionEvent
+     */
     private void handleOpen(ActionEvent actionEvent) {
         SwingWorker<BufferedImage, Void> worker = new SwingWorker<>() {
             @Override
@@ -89,6 +97,10 @@ public class MenuGUI extends JMenuBar {
         worker.execute();
     }
 
+    /**
+     * save the board to the file pointer, if not, run saveAS
+     * @param actionEvent
+     */
     private void handleSave(ActionEvent actionEvent) {
         if (curFile != null){
             SwingWorker<Boolean, Void> worker= new SwingWorker<>() {
@@ -126,6 +138,10 @@ public class MenuGUI extends JMenuBar {
         }
     }
 
+    /**
+     * opem a file window, save to selected destination
+     * @param actionEvent
+     */
     private void handleSaveAs(ActionEvent actionEvent) {
         SwingWorker<Boolean, Void> worker= new SwingWorker<>() {
             @Override
@@ -167,6 +183,10 @@ public class MenuGUI extends JMenuBar {
         worker.execute();
     }
 
+    /**
+     * Clear canvas and lock canvas operation including those of client
+     * @param actionEvent
+     */
     private void handleClose(ActionEvent actionEvent) {
         this.curFile = null;
         board.initCanvas();

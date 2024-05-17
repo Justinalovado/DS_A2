@@ -50,6 +50,9 @@ public class MainGUI extends JFrame{
         this.chatPanel.setChatLock(!isManager);
     }
 
+    /**
+     * helper function for creating a waiting dialog
+     */
     private void createWaitPane(){
         SwingUtilities.invokeLater(() -> {
             JDialog dialog = new JDialog(this, "Waiting for Manager approval", true);
@@ -64,11 +67,17 @@ public class MainGUI extends JFrame{
         });
     }
 
+    /**
+     * lift canvas and chat lock
+     */
     public void unlockAll(){
         this.chatPanel.setChatLock(false);
         this.chatPanel.setChatLock(false);
     }
 
+    /**
+     * For client, prompt client of a kick from server
+     */
     public void promptKick(){
         SwingUtilities.invokeLater(() -> {
             Object[] options = {"Exit", "Reconnect"};
@@ -93,7 +102,11 @@ public class MainGUI extends JFrame{
 
     }
 
-
+    /**
+     * for Client, prompt the joinRequest outcome
+     * @param success
+     * @param msg
+     */
     public void promptJoinOutcome(boolean success, String msg){
         String title = success ? "Join Success" : "Join Failed";
         SwingUtilities.invokeLater(() -> {
@@ -110,6 +123,10 @@ public class MainGUI extends JFrame{
         });
     }
 
+    /**
+     * for Client, prompt a shutdown message
+     * @param msg
+     */
     public void promptShutdownMessage(String msg){
         SwingUtilities.invokeLater(() -> {
             JOptionPane.showMessageDialog(
@@ -122,6 +139,9 @@ public class MainGUI extends JFrame{
         });
     }
 
+    /**
+     * for Client, prompt a waiting panel for quitting program while waiting
+     */
     public void promptWaiting(){
         SwingUtilities.invokeLater(() -> {
             waitDialog.setLocationRelativeTo(this);
@@ -129,10 +149,16 @@ public class MainGUI extends JFrame{
         });
     }
 
+    /**
+     * for Client, hide the waiting panel
+     */
     public void unpromptWaiting(){
         SwingUtilities.invokeLater(() -> waitDialog.setVisible(false));
     }
 
+    /**
+     * for Client, prompt a new canvas update from server
+     */
     public void promptNewCanvas(){
         SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
                 this,
@@ -142,6 +168,9 @@ public class MainGUI extends JFrame{
         ));
     }
 
+    /**
+     * for Client, prompt a close canvas update from server
+     */
     public void promptCloseCanvas(){
         SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
                 this,

@@ -18,7 +18,6 @@ import java.util.concurrent.Executors;
 
 
 public class Manager extends UnicastRemoteObject implements ManagerInterface, BroadCaster {
-//    private List<ClientInterface> clients = new ArrayList<>();
     private final Map<String, ClientInterface> clients = new ConcurrentHashMap<>(); // TODO: Make method sync
     private final MainGUI gui;
 
@@ -31,6 +30,12 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         manager = this;
     }
 
+    /**
+     * Server RMI interface, client calls this method to join the server
+     * @param client
+     * @return
+     * @throws RemoteException
+     */
     @Override
     public String clientRequestJoin(ClientInterface client) throws RemoteException {
         String clientName = client.getName();
@@ -56,7 +61,11 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         }
     }
 
-
+    /**
+     * update every client adding a new entry to chat record
+     * @param name
+     * @param msg
+     */
     @Override
     public void broadcastChatAppend(String name, String msg) {
         executor.submit(() -> clients.forEach((clientName, clientInterface) -> {
@@ -69,6 +78,10 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         }));
     }
 
+    /**
+     * update every client renewing the current online clients
+     * @param lst
+     */
     @Override
     public void broadcastUserList(DefaultListModel<String> lst) {
         executor.submit(()-> clients.forEach((clientName, clientInterface) -> {
@@ -82,6 +95,14 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         }));
     }
 
+    /**
+     * update every client adding a new draw stroke
+     * @param a
+     * @param b
+     * @param strokeWidth
+     * @param color
+     * @param shape
+     */
     @Override
     public void broadcastDrawShape(Point a, Point b, float strokeWidth, Color color, DrawMode shape) {
         executor.submit(() -> clients.forEach((clientName, clientInterface) -> {
@@ -95,6 +116,12 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         }));
     }
 
+    /**
+     * update every client adding a new text drawing
+     * @param a
+     * @param c
+     * @param txt
+     */
     @Override
     public void broadcastDrawTxt(Point a, Color c, String txt) {
         executor.submit(() -> clients.forEach((clientName, clientInterface) -> {
@@ -108,6 +135,10 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         }));
     }
 
+    /**
+     * update all client of the entire whiteboard
+     * @param img
+     */
     @Override
     public void broadcastOverhaulBoard(BufferedImage img) {
         executor.submit(() -> clients.forEach((clientName, clientInterface) -> {
@@ -124,6 +155,10 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         }));
     }
 
+    /**
+     * update all client of the entire chat record
+     * @param chat
+     */
     @Override
     public void broadcastOverhaulChat(String chat) {
         executor.submit(() -> clients.forEach((clientName, clientInterface) -> {
@@ -137,6 +172,9 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         }));
     }
 
+    /**
+     * notify all client of a new canvas update
+     */
     @Override
     public void broadcastNewCanvas() {
         executor.submit(() -> clients.forEach((clientName, clientInterface) -> {
@@ -150,6 +188,9 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         }));
     }
 
+    /**
+     * notify all clients of a canvas closure
+     */
     @Override
     public void broadcastCLoseCanvas() {
         executor.submit(() -> clients.forEach((clientName, clientInterface) -> {
@@ -163,6 +204,10 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         }));
     }
 
+    /**
+     * update all client of canvas lock
+     * @param bool
+     */
     @Override
     public void broadcastSetLock(boolean bool) {
         executor.submit(() -> clients.forEach((clientName, clientInterface) -> {
@@ -184,6 +229,11 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         gui.chatPanel.appendChat(name, msg);
     }
 
+    /**
+     * Server RMI for client to notify a quit
+     * @param client
+     * @throws RemoteException
+     */
     @Override
     public void clientQuit(ClientInterface client) throws RemoteException {
         String name = client.getName();
@@ -192,18 +242,38 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         clients.remove(name);
     }
 
+    /**
+     * Server RMI interface for client to update their shape drawn
+     * @param a
+     * @param b
+     * @param strokeWidth
+     * @param color
+     * @param shape
+     * @throws RemoteException
+     */
     @Override
     public void clientDrawShape(Point a, Point b, float strokeWidth, Color color, DrawMode shape) throws RemoteException {
         gui.whiteBoard.drawShape(a, b, strokeWidth, color, shape);
         broadcastDrawShape(a, b, strokeWidth, color, shape);
     }
 
+    /**
+     * Server RMI interface for client to update their text drawn
+     * @param p
+     * @param c
+     * @param txt
+     * @throws RemoteException
+     */
     @Override
     public void clientDrawTxt(Point p, Color c, String txt) throws RemoteException {
         gui.whiteBoard.updateDrawTxt(p, c, txt);
         broadcastDrawTxt(p, c, txt);
     }
 
+    /**
+     * Kicks selected client by name, intended for listGUI call
+     * @param name
+     */
     public void kickClient(String name){
         executor.submit(() -> {
             gui.listPane.removeUser(name);
@@ -219,6 +289,9 @@ public class Manager extends UnicastRemoteObject implements ManagerInterface, Br
         });
     }
 
+    /**
+     * Notify all client that server is shutdown.
+     */
     public void notifyShutdown(){
         clients.forEach((clientName, clientInterface) -> {
             try {

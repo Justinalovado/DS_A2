@@ -25,6 +25,11 @@ public class Utility {
         name = defaultName;
     }
 
+    /**
+     * deserialize byte array into buffered image
+     * @param imgByte
+     * @return
+     */
     public static BufferedImage deserializeImage(byte[] imgByte){
         try(ByteArrayInputStream in = new ByteArrayInputStream(imgByte)){
             return ImageIO.read(in);
@@ -34,6 +39,11 @@ public class Utility {
         }
     }
 
+    /**
+     * serialize byte buffered image to byte array
+     * @param img
+     * @return
+     */
     public static byte[] serializeImage(BufferedImage img){
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()){
             ImageIO.write(img, "png", baos);

@@ -35,6 +35,10 @@ public class CreateWhiteBoard {
         }
     }
 
+    /**
+     * takes input, does to perform validation but fills Username/ip:port when missing
+     * @param args
+     */
     private static void readInput(String[] args){
         try {
             Utility.name = args[2];
@@ -46,13 +50,15 @@ public class CreateWhiteBoard {
         try {
             Utility.SESSION_PORT = Integer.parseInt(args[1]);
             Utility.SESSION_IP = args[0];
-//            System.setProperty("java.rmi.server.hostname", Announcer.SESSION_IP);
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e){
             System.out.println("Invalid arguments, using default...");
             Utility.setDefaultSessionAddr();
         }
     }
 
+    /**
+     * Graceful shutdown safety
+     */
     private static void addShutdownCleaner(){
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (manager != null){

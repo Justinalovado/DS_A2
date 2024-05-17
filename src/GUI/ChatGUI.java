@@ -34,7 +34,7 @@ public class ChatGUI extends JPanel{
     }
 
     /**
-     *
+     * for internal use, broadcast change
      */
     public void appendChat(String username, String msg){
         if (isManager){
